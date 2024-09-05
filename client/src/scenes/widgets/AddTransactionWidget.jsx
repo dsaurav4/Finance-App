@@ -23,7 +23,12 @@ import { Formik } from "formik";
 import WidgetWrapper from "../../components/WidgetWrapper.jsx";
 import FlexBetween from "../../components/FlexBetween.jsx";
 import Alerts from "../../components/Alerts.jsx";
-import { setIncomes, setExpenses } from "../../state/index.js";
+import {
+  setIncomes,
+  setExpenses,
+  setIncome,
+  setExpense,
+} from "../../state/index.js";
 
 const incomeSchema = yup.object().shape({
   description: yup.string().notRequired(),
@@ -75,7 +80,12 @@ const expenseSchema = yup.object().shape({
     .required("Category is required"),
 });
 
-const AddTransactionWidget = ({ transaction, pageType, editRow }) => {
+const AddTransactionWidget = ({
+  transaction,
+  pageType,
+  editRow,
+  handleCloseEdit,
+}) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
@@ -172,6 +182,77 @@ const AddTransactionWidget = ({ transaction, pageType, editRow }) => {
     }
   };
 
+  const updateIncome = async (values, onSubmitProps) => {
+    const formData = new FormData();
+
+    formData.append("description", values.description);
+    formData.append("amount", values.amount);
+    formData.append("date", values.date);
+    formData.append("category", values.category);
+
+    const response = await fetch(
+      `http://localhost:3001/transactions/income/${editRow.id}/`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    onSubmitProps.resetForm();
+
+    try {
+      const income = await response.json();
+
+      if (income) {
+        dispatch(setIncome({ income }));
+        setAlert("Income Updated successfully.");
+        setSeverity("success");
+        setAlertOpen(true);
+        handleCloseEdit();
+      }
+    } catch (error) {
+      setAlert(error.message);
+      setSeverity("error");
+    }
+  };
+
+  const updateExpense = async (values, onSubmitProps) => {
+    const formData = new FormData();
+
+    formData.append("description", values.description);
+    formData.append("amount", values.amount);
+    formData.append("date", values.date);
+    formData.append("category", values.category);
+
+    const response = await fetch(
+      `http://localhost:3001/transactions/expense/${editRow.id}/`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    onSubmitProps.resetForm();
+
+    try {
+      const expense = await response.json();
+
+      if (expense) {
+        dispatch(setExpense({ expense }));
+        handleCloseEdit();
+      }
+    } catch (error) {
+      setAlert(error.message);
+      setSeverity("error");
+    }
+  };
+
   const expense = async (values, onSubmitProps) => {
     const formData = new FormData();
 
@@ -213,6 +294,10 @@ const AddTransactionWidget = ({ transaction, pageType, editRow }) => {
       (transaction === "income"
         ? income(values, onSubmitProps)
         : expense(values, onSubmitProps));
+    pageType === "update" &&
+      (transaction === "income"
+        ? updateIncome(values, onSubmitProps)
+        : updateExpense(values, onSubmitProps));
   };
 
   const handleAlertClose = (event, reason) => {
@@ -237,9 +322,9 @@ const AddTransactionWidget = ({ transaction, pageType, editRow }) => {
               fontSize: "1rem",
             }}
           >
-            {`Add your latest ${
-              transaction === "income" ? "Income" : "Expense"
-            }!`}
+            {`${pageType === "add" ? "Add" : "Update"} your ${
+              pageType === "add" ? "latest" : ""
+            } ${transaction === "income" ? "Income" : "Expense"}!`}
           </Typography>
         </FlexBetween>
         <Formik
@@ -392,7 +477,9 @@ const AddTransactionWidget = ({ transaction, pageType, editRow }) => {
                   }}
                 >
                   {transaction === "income" ? <AttachMoney /> : <MoneyOff />}
-                  {`Add ${transaction === "income" ? "Income" : "Expense"}`}
+                  {`${pageType === "add" ? "add" : "Update"} ${
+                    transaction === "income" ? "Income" : "Expense"
+                  }`}
                 </Button>
               </Box>
             </form>

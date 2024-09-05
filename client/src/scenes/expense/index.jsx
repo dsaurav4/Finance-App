@@ -7,6 +7,8 @@ import { setExpenses } from "../../state";
 import { useEffect, useState } from "react";
 import HighestCard from "../widgets/HighestCard";
 import TransactionTable from "../widgets/TransactionsTable";
+import Piechart from "../widgets/Piechart";
+import WidgetWrapper from "../../components/WidgetWrapper";
 
 const Expense = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -37,7 +39,6 @@ const Expense = () => {
   return (
     <Box sx={{ paddingBottom: "3rem" }}>
       <Navbar />
-
       <Box
         width="100%"
         padding={`${isNonMobileScreens ? "2rem" : 0} 6%`}
@@ -61,6 +62,26 @@ const Expense = () => {
             year={year}
             setYear={setYear}
           />
+        </Box>
+      </Box>
+
+      <Box
+        width="100%"
+        padding={`0 6%`}
+        display={isNonMobileScreens ? "flex" : "block"}
+        gap="1rem"
+        justifyContent="space-between"
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          sx={{ marginTop: "1rem" }}
+        >
+          <TransactionTable
+            type="expense"
+            transactions={expenses}
+          ></TransactionTable>
         </Box>
       </Box>
 
@@ -119,10 +140,7 @@ const Expense = () => {
           flexBasis={isNonMobileScreens ? "60%" : undefined}
           sx={{ marginTop: "1rem" }}
         >
-          <TransactionTable
-            type="expense"
-            transactions={expenses}
-          ></TransactionTable>
+          <Piechart transactions={expenses} type="expense" />
         </Box>
       </Box>
     </Box>

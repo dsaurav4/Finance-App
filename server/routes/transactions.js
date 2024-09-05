@@ -23,8 +23,8 @@ router.post("/:userId/income", verifyToken, upload.none(), postIncome);
 router.post("/:userId/expense", verifyToken, upload.none(), postExpense);
 
 /* UPDATE */
-router.patch("/income/:id", verifyToken, editIncome);
-router.patch("/expense/:id", verifyToken, editExpense);
+router.patch("/income/:id", verifyToken, upload.none(), editIncome);
+router.patch("/expense/:id", verifyToken, upload.none(), editExpense);
 
 /* DELETE */
 router.delete("/:userId/income/:id", verifyToken, deleteIncome);

@@ -108,8 +108,8 @@ const Chart = ({ transactions, transactionsType, year, setYear }) => {
 export default Chart;
 
 const aggregateTransactionsByMonth = (transactions, year) => {
-  const startDate = new Date(Date.UTC(year, 0, 1)); // January 1st of the year in UTC
-  const endDate = new Date(Date.UTC(year, 11, 31)); // December 31st of the year in UTC
+  const startDate = new Date(Date.UTC(year, 0, 1));
+  const endDate = new Date(Date.UTC(year, 11, 31));
 
   const allMonths = eachMonthOfInterval({
     start: startDate,
@@ -117,12 +117,11 @@ const aggregateTransactionsByMonth = (transactions, year) => {
   }).map((date) => format(date, "MMM yyyy"));
 
   const transactionsByMonth = transactions.reduce((acc, transaction) => {
-    // Parse the date string into a Date object using parseISO
     const transactionDate = parseISO(transaction.date);
     const transactionYear = transactionDate.getUTCFullYear();
 
     if (transactionYear === year) {
-      const month = format(transactionDate, "MMM yyyy", { timeZone: "UTC" }); // Use UTC to avoid timezone issues
+      const month = format(transactionDate, "MMM yyyy", { timeZone: "UTC" });
       if (!acc[month]) {
         acc[month] = 0;
       }

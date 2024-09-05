@@ -17,7 +17,12 @@ const EditDialogBox = ({ open, handleClose, row, type }) => {
     >
       <DialogTitle>{"Edit Transaction"}</DialogTitle>
       <DialogContent>
-        <AddTransactionWidget transaction={type} editRow={row} />
+        <AddTransactionWidget
+          transaction={type}
+          editRow={row}
+          handleCloseEdit={handleClose}
+          pageType="update"
+        />
       </DialogContent>
     </Dialog>
   );

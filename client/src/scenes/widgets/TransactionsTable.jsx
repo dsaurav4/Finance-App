@@ -75,7 +75,7 @@ const TransactionTable = ({ type, transactions }) => {
     {
       field: "category",
       headerName: "Category",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         const category = params.value;
         const icon = categories[category] || <Category />;
@@ -101,7 +101,7 @@ const TransactionTable = ({ type, transactions }) => {
       field: "amount",
       headerName: "Amount",
       type: "number",
-      width: 200,
+      width: 100,
       headerAlign: "left",
       renderCell: (params) => (
         <Typography
@@ -161,10 +161,6 @@ const TransactionTable = ({ type, transactions }) => {
   const userId = useSelector((state) => state.user._id);
   const token = useSelector((state) => state.token);
   const dispatch = useDispatch();
-
-  const handleEdit = (row) => {
-    console.log("Editing row:", row);
-  };
 
   const handleDelete = async (row, type) => {
     try {
@@ -230,14 +226,11 @@ const TransactionTable = ({ type, transactions }) => {
 
   return (
     <WidgetWrapper sx={{ minWidth: 0 }}>
-      <FlexBetween
-        sx={{ justifyContent: "center", width: "100%", padding: "1.5rem" }}
-      >
+      <FlexBetween sx={{ justifyContent: "center", width: "75%%" }}>
         <Typography variant="h6">{`Latest ${
           type === "income" ? "Incomes" : "Expenses"
         }`}</Typography>
       </FlexBetween>
-
       <Paper sx={{ height: 325 }} width="100%">
         <DataGrid
           rows={sortedRows}

@@ -7,6 +7,8 @@ import { setIncomes } from "../../state";
 import { useEffect, useState } from "react";
 import HighestCard from "../widgets/HighestCard";
 import TransactionTable from "../widgets/TransactionsTable";
+import Piechart from "../widgets/Piechart";
+import WidgetWrapper from "../../components/WidgetWrapper";
 
 const Income = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -24,9 +26,12 @@ const Income = () => {
       }
     );
 
-    const data = await response.json();
-
-    dispatch(setIncomes({ incomes: data }));
+    try {
+      const data = await response.json();
+      if (!data.message) dispatch(setIncomes({ incomes: data }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -40,7 +45,7 @@ const Income = () => {
       <Navbar />
       <Box
         width="100%"
-        padding={`${isNonMobileScreens ? "2rem" : 0} 6%`}
+        padding={`0 6%`}
         display={isNonMobileScreens ? "flex" : "block"}
         gap="1rem"
         justifyContent="space-between"
@@ -62,8 +67,28 @@ const Income = () => {
             setYear={setYear}
           />
         </Box>
-        <Box></Box>
       </Box>
+
+      <Box
+        width="100%"
+        padding={`0 6%`}
+        display={isNonMobileScreens ? "flex" : "block"}
+        gap="1rem"
+        justifyContent="space-between"
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          sx={{ marginTop: "1rem" }}
+        >
+          <TransactionTable
+            type="income"
+            transactions={incomes}
+          ></TransactionTable>
+        </Box>
+      </Box>
+
       <Box
         width="100%"
         padding={`0 6%`}
@@ -109,14 +134,12 @@ const Income = () => {
             }
           ></HighestCard>
         </Box>
+
         <Box
           flexBasis={isNonMobileScreens ? "60%" : undefined}
           sx={{ marginTop: "1rem" }}
         >
-          <TransactionTable
-            type="income"
-            transactions={incomes}
-          ></TransactionTable>
+          <Piechart transactions={incomes} type="income" />
         </Box>
       </Box>
     </Box>

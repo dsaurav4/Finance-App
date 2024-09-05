@@ -6,7 +6,9 @@ import User from "../models/User.js";
 export const getIncome = async (req, res) => {
   try {
     const { userId } = req.params;
+
     const income = await Income.find({ userId });
+
     res.status(200).json(income);
   } catch (error) {
     res.status(404).json({ message: error.message });

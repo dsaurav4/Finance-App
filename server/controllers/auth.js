@@ -195,7 +195,13 @@ export const verifyCode = async (req, res) => {
     const verification = await Verification.findOne({ userId });
     const isMatch = await bcrypt.compare(code, verification.code);
 
-    if (!verification || verification.expiresAt < Date.now() || !isMatch)
+    console.log("Date:", Date.now().toLocaleString());
+
+    if (
+      !verification ||
+      verification.expiresAt < Date.now().toLocaleString() ||
+      !isMatch
+    )
       return res.status(409).json({ message: "Verification link not valid" });
 
     const user = await User.findById(userId);

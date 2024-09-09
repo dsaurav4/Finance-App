@@ -56,7 +56,19 @@ const getTransactionsByCategory = (transactions, type) => {
     return acc;
   }, {});
 
-  transactions.forEach((transaction) => {
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const currentMonthTransactions = transactions.filter((transaction) => {
+    const transactionDate = new Date(transaction.date);
+    return (
+      transactionDate.getMonth() === currentMonth &&
+      transactionDate.getFullYear() === currentYear
+    );
+  });
+
+  currentMonthTransactions.forEach((transaction) => {
     const { category, amount } = transaction;
     if (transactionsByCategory.hasOwnProperty(category)) {
       transactionsByCategory[category] += amount;

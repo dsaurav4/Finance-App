@@ -11,6 +11,7 @@ import {
   FormControl,
   Select,
   InputBase,
+  InputLabel,
   InputAdornment,
 } from "@mui/material";
 import { AttachMoney, MoneyOff } from "@mui/icons-material";
@@ -409,31 +410,21 @@ const AddTransactionWidget = ({
                   </LocalizationProvider>
                 </Box>
                 <Box sx={{ gridColumn: "span 2" }}>
-                  <FormControl variant="standard" fullWidth>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">
+                      Category*
+                    </InputLabel>
                     <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
                       value={values.category}
+                      label="Category*"
                       onChange={(e) => {
                         handleChange(e);
                       }}
                       onBlur={handleBlur}
                       name="category"
-                      sx={{
-                        backgroundColor: palette.neutral.light,
-                        borderRadius: "0.25rem",
-                        p: "0.25rem 1rem",
-                        "& .MuiSvgIcon-root": {
-                          pr: "0.25rem",
-                          width: "3rem",
-                        },
-                        "& .MuiSelect-select:focus": {
-                          backgroundColor: palette.neutral.light,
-                        },
-                      }}
-                      input={<InputBase />}
                     >
-                      <MenuItem value="" disabled>
-                        Select Category
-                      </MenuItem>
                       {transaction === "income"
                         ? incomeCategories.map((category) => (
                             <MenuItem value={category} key={category}>
@@ -452,11 +443,6 @@ const AddTransactionWidget = ({
                       </Typography>
                     )}
                   </FormControl>
-                  <Typography
-                    sx={{ marginTop: "0.5rem", color: palette.neutral.dark }}
-                  >
-                    Category*
-                  </Typography>
                 </Box>
 
                 <Button

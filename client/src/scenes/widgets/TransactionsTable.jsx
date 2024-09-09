@@ -231,13 +231,13 @@ const TransactionTable = ({ type, transactions }) => {
           type === "income" ? "Incomes" : "Expenses"
         }`}</Typography>
       </FlexBetween>
-      <Paper sx={{ height: 325 }} width="100%">
+      <Paper sx={{ height: 325, overflow: "hidden" }} width="100%">
         <DataGrid
           rows={sortedRows}
           columns={columns}
           pageSize={10}
           pageSizeOptions={[5, 10, 25, 50, 100]}
-          sx={{ border: 0, overflowX: "scroll" }}
+          sx={{ "&, [class^=MuiDataGrid]": { border: "none" } }}
           width="100%"
         />
       </Paper>

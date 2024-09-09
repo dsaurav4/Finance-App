@@ -8,3 +8,10 @@ body,
   width: 100%;
   font-family: "Rubik", sans-serif;
 }
+
+* {
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}

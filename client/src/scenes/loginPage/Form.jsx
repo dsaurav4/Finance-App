@@ -324,7 +324,10 @@ const Form = ({ pageType, setPageType }) => {
                     },
                   }}
                 >
-                  {isLogin && "Don't have an account? Sign Up here."}
+                  {isLogin &&
+                    `${
+                      isNonMobile ? "Don't have an account?" : ""
+                    } Sign Up here.`}
                   {isRegister && "Already have an account? Login here."}
                 </Typography>
               )}

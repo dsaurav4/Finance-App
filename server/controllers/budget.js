@@ -7,7 +7,7 @@ export const getBudgets = async (req, res) => {
     const { userId } = req.params;
     const budgets = await Budget.find({ userId });
 
-    res.status(200).json({ budgets });
+    res.status(200).json(budgets);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -19,17 +19,34 @@ export const postBudget = async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json({ message: "User not found!" });
-      return;
+      return res.status(404).json({ message: "User not found!" });
     }
+
     const { period, amount, startDate, endDate } = req.body;
+
+    const existingBudgets = await Budget.find({
+      userId: user._id,
+      period,
+      $or: [
+        {
+          startDate: { $lte: new Date(endDate) },
+          endDate: { $gte: new Date(startDate) },
+        },
+      ],
+    });
+
+    if (existingBudgets.length > 0) {
+      return res.status(400).json({
+        message: `You already have a ${period.toLowerCase()} budget overlapping within the selected period.`,
+      });
+    }
 
     const newBudget = new Budget({
       userId: user._id,
       period,
       amount,
-      startDate,
-      endDate,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
     });
 
     const savedBudget = await newBudget.save();
@@ -39,7 +56,8 @@ export const postBudget = async (req, res) => {
     });
 
     const budgets = await Budget.find({ userId: user._id });
-    res.status(201).json({ budgets });
+
+    res.status(201).json(budgets);
   } catch (error) {
     res.status(409).json({ message: error.message });
   }

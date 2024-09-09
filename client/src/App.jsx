@@ -8,6 +8,8 @@ import LoginPage from "./scenes/loginPage";
 import Dashboard from "./scenes/dashboard";
 import Income from "./scenes/income";
 import Expense from "./scenes/expense";
+import Budget from "./scenes/budget";
+import SavingGoals from "./scenes/savingGoals";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -32,6 +34,14 @@ function App() {
             <Route
               path="/expense"
               element={isAuth ? <Expense /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/budget"
+              element={isAuth ? <Budget /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/savingGoal"
+              element={isAuth ? <SavingGoals /> : <Navigate to="/" />}
             />
           </Routes>
         </ThemeProvider>

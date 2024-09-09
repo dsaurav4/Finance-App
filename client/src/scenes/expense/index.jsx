@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import HighestCard from "../widgets/HighestCard";
 import TransactionTable from "../widgets/TransactionsTable";
 import Piechart from "../widgets/Piechart";
-import WidgetWrapper from "../../components/WidgetWrapper";
+import TotalTransaction from "../widgets/TotalTransaction";
+import TransactionChangeCard from "../widgets/TransactionChangeCard";
 
 const Expense = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -41,7 +42,7 @@ const Expense = () => {
       <Navbar />
       <Box
         width="100%"
-        padding={`${isNonMobileScreens ? "2rem" : 0} 6%`}
+        padding={`0 6%`}
         display={isNonMobileScreens ? "flex" : "block"}
         gap="1rem"
         justifyContent="space-between"
@@ -77,11 +78,23 @@ const Expense = () => {
           flexDirection="column"
           gap="1rem"
           sx={{ marginTop: "1rem" }}
+          flexBasis={isNonMobileScreens ? "40%" : undefined}
         >
           <TransactionTable
             type="expense"
             transactions={expenses}
           ></TransactionTable>
+        </Box>
+        <Box
+          flexBasis={isNonMobileScreens ? "60%" : undefined}
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          sx={{ marginTop: "1rem" }}
+          justifyContent="center"
+        >
+          <TotalTransaction transaction={expenses} type="expense" />
+          <TransactionChangeCard transaction={expenses} type="expense" />
         </Box>
       </Box>
 

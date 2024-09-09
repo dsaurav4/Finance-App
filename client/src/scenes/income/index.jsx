@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import HighestCard from "../widgets/HighestCard";
 import TransactionTable from "../widgets/TransactionsTable";
 import Piechart from "../widgets/Piechart";
-import WidgetWrapper from "../../components/WidgetWrapper";
+import TotalTransaction from "../widgets/TotalTransaction";
+import TransactionChangeCard from "../widgets/TransactionChangeCard";
 
 const Income = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -81,11 +82,23 @@ const Income = () => {
           flexDirection="column"
           gap="1rem"
           sx={{ marginTop: "1rem" }}
+          flexBasis={isNonMobileScreens ? "40%" : undefined}
         >
           <TransactionTable
             type="income"
             transactions={incomes}
           ></TransactionTable>
+        </Box>
+        <Box
+          flexBasis={isNonMobileScreens ? "60%" : undefined}
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          sx={{ marginTop: "1rem" }}
+          justifyContent="center"
+        >
+          <TotalTransaction transaction={incomes} type="income" />
+          <TransactionChangeCard transaction={incomes} type="income" />
         </Box>
       </Box>
 

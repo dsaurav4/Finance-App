@@ -14,7 +14,6 @@ import AddBudget from "../widgets/AddBudget";
 import { setBudgets } from "../../state/index.js";
 import BudgetProgress from "../widgets/BudgetProgress.jsx";
 import { parseISO, isWithinInterval } from "date-fns";
-import FlexBetween from "../../components/FlexBetween.jsx";
 import WidgetWrapper from "../../components/WidgetWrapper.jsx";
 
 const Budget = () => {
@@ -193,7 +192,7 @@ const Budget = () => {
           getExpiredBudgets(weeklyBudgets).length > 0 ? (
             getExpiredBudgets(weeklyBudgets).map((budget) => (
               <BudgetProgress
-                key={budget.id}
+                key={budget._id}
                 budget={budget}
                 showChart={true}
                 expired={true}
@@ -203,7 +202,7 @@ const Budget = () => {
             getExpiredBudgets(monthlyBudgets).length > 0 ? (
             getExpiredBudgets(monthlyBudgets).map((budget) => (
               <BudgetProgress
-                key={budget.id}
+                key={budget._id}
                 budget={budget}
                 showChart={true}
                 expired={true}
@@ -242,6 +241,7 @@ const Budget = () => {
                 key={budget._id}
                 budget={budget}
                 showChart={false}
+                upcoming={true}
               />
             ))
           ) : period === "Monthly" &&
@@ -251,6 +251,7 @@ const Budget = () => {
                 key={budget._id}
                 budget={budget}
                 showChart={false}
+                upcoming={true}
               />
             ))
           ) : (

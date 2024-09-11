@@ -29,9 +29,6 @@ const SavingGoalSchema = new Schema(
       type: Date,
       required: true,
     },
-    description: {
-      type: String,
-    },
   },
   { timestamps: true }
 );

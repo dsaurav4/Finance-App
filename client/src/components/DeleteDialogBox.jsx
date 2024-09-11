@@ -25,7 +25,7 @@ const DeleteDialogBox = ({ open, handleClose, handleDelete, row, type }) => {
       <DialogTitle>{"Delete Transaction"}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-slide-description">
-          Are you sure you want to delete this transaction?
+          Are you sure you want to delete this?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -1,11 +1,5 @@
 import { BarChart } from "@mui/x-charts/BarChart";
-import {
-  differenceInDays,
-  addWeeks,
-  addMonths,
-  format,
-  parseISO,
-} from "date-fns";
+import { addDays, differenceInDays, parseISO } from "date-fns";
 import { useTheme, Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import { ChartsReferenceLine } from "@mui/x-charts";
@@ -25,7 +19,6 @@ const BudgetChart = ({ budget }) => {
           {
             dataKey: "expense",
             color: "#4CAF50",
-            label: "Expense",
           },
         ]}
         xAxis={[
@@ -52,9 +45,7 @@ const BudgetChart = ({ budget }) => {
       >
         <ChartsReferenceLine
           y={budget.amount}
-          stroke="red"
           label={`${budget.period} Budget $${budget.amount}`}
-          strokeDasharray="5 5"
         />
       </BarChart>
     </Box>
@@ -79,16 +70,18 @@ const getBudgetBreakdown = (budget, expenses) => {
 
   if (period === "Weekly") {
     const totalDays = differenceInDays(end, start);
-    const numberOfWeeks = Math.ceil(totalDays / 7);
+    const daysInWeek = 7;
+    const numberOfWeeks = Math.ceil(totalDays / daysInWeek);
     const weeks = [];
 
     for (let i = 0; i < numberOfWeeks; i++) {
-      const weekStart = addWeeks(start, i);
-      const weekEnd =
-        addWeeks(start, i + 1) < end ? addWeeks(start, i + 1) : end;
+      const weekStart = addDays(start, i * daysInWeek);
+      const weekEnd = addDays(weekStart, daysInWeek - 1); // Ensure inclusive of start
+      const effectiveEnd = weekEnd > end ? end : weekEnd; // Avoid overshooting the final date
+
       const weekExpenses = getExpensesBetweenDates(
         weekStart,
-        weekEnd,
+        effectiveEnd,
         expenses
       );
 
@@ -101,21 +94,24 @@ const getBudgetBreakdown = (budget, expenses) => {
 
     return weeks;
   } else if (period === "Monthly") {
-    const totalMonths = Math.ceil(differenceInDays(end, start) / 30);
+    const totalDays = differenceInDays(end, start);
+    const daysInMonth = 30; // Approximate number of days in a month
+    const numberOfMonths = Math.ceil(totalDays / daysInMonth);
     const months = [];
 
-    for (let i = 0; i < totalMonths; i++) {
-      const monthStart = addMonths(start, i);
-      const monthEnd =
-        addMonths(start, i + 1) < end ? addMonths(start, i + 1) : end;
+    for (let i = 0; i < numberOfMonths; i++) {
+      const monthStart = addDays(start, i * daysInMonth);
+      const monthEnd = addDays(monthStart, daysInMonth - 1); // Ensure inclusive of start
+      const effectiveEnd = monthEnd > end ? end : monthEnd; // Avoid overshooting the final date
+
       const monthExpenses = getExpensesBetweenDates(
         monthStart,
-        monthEnd,
+        effectiveEnd,
         expenses
       );
 
       months.push({
-        label: `Month ${i + 1}`, // Update label to "Month 1", "Month 2", etc.
+        label: `Month ${i + 1}`, // Month 1, Month 2, etc.
         expense: monthExpenses,
         color: monthExpenses > amount ? "red" : "#4CAF50",
       });

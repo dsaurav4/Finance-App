@@ -20,6 +20,6 @@ router.post("/:userId/budgets", verifyToken, upload.none(), postBudget);
 router.patch("/budgets/:id", verifyToken, upload.none(), updateBudget);
 
 /* DELETE */
-router.delete("/:userId/budgets/:id", verifyToken, deleteBudget);
+router.delete("/:userId/:id", verifyToken, deleteBudget);
 
 export default router;

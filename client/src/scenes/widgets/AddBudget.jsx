@@ -10,7 +10,6 @@ import {
   MenuItem,
   FormControl,
   Select,
-  InputBase,
   InputAdornment,
   InputLabel,
 } from "@mui/material";
@@ -24,7 +23,7 @@ import WidgetWrapper from "../../components/WidgetWrapper.jsx";
 import FlexBetween from "../../components/FlexBetween.jsx";
 import Alerts from "../../components/Alerts.jsx";
 import { setBudgets } from "../../state/index.js";
-import { addWeeks, addMonths, addYears } from "date-fns";
+import { addDays } from "date-fns";
 
 const budgetSchema = yup.object().shape({
   period: yup
@@ -197,7 +196,7 @@ const AddBudget = () => {
                   </FormControl>
                 </Box>
                 <TextField
-                  label="Amount*"
+                  label="Amount"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.amount}
@@ -252,7 +251,7 @@ const AddBudget = () => {
                 <Box sx={{ gridColumn: "span 2" }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      label="Start Date*"
+                      label="Start Date"
                       value={values.startDate}
                       onChange={(newValue) => {
                         setFieldValue("startDate", newValue);
@@ -307,16 +306,15 @@ export default AddBudget;
 
 const calculateEndDate = (startDate, period, noOfPeriod) => {
   let endDate;
+  const daysInWeek = 7;
+  const daysInMonth = 30;
 
   switch (period) {
     case "Weekly":
-      endDate = addWeeks(new Date(startDate), noOfPeriod);
+      endDate = addDays(new Date(startDate), noOfPeriod * daysInWeek - 1);
       break;
     case "Monthly":
-      endDate = addMonths(new Date(startDate), noOfPeriod);
-      break;
-    case "Yearly":
-      endDate = addYears(new Date(startDate), noOfPeriod);
+      endDate = addDays(new Date(startDate), noOfPeriod * daysInMonth - 1);
       break;
     default:
       endDate = new Date(startDate);

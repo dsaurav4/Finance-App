@@ -6,12 +6,7 @@ import {
   TextField,
   Typography,
   Button,
-  MenuItem,
-  FormControl,
-  Select,
-  InputBase,
   InputAdornment,
-  InputLabel,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -22,7 +17,6 @@ import { Formik } from "formik";
 import WidgetWrapper from "../../components/WidgetWrapper.jsx";
 import FlexBetween from "../../components/FlexBetween.jsx";
 import Alerts from "../../components/Alerts.jsx";
-import { addDays } from "date-fns";
 import { setSavingGoals } from "../../state/index.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -42,10 +36,7 @@ const savingGoalSchema = yup.object().shape({
     .date()
     .typeError("End Date must be a valid date")
     .required("End Date is required")
-    .min(
-      yup.ref("startDate"),
-      "End Date must be greater than or equal to Start Date"
-    ),
+    .min(yup.ref("startDate"), "End date must not be prior to start date."),
 });
 
 const initialSavingGoalValues = {
@@ -83,16 +74,41 @@ const AddSavingGoal = () => {
     return () => clearInterval(intervalId);
   }, [goalsList.length]);
 
-  const handleFormSubmit = (values, onSubmitProps) => {
+  const handleFormSubmit = async (values, onSubmitProps) => {
     const formData = new FormData();
     formData.append("goalName", values.goalName);
     formData.append("targetAmount", values.targetAmount);
     formData.append("startDate", values.startDate);
     formData.append("endDate", values.endDate);
 
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
+    try {
+      const response = await fetch(`http://localhost:3001/savingGoals/${_id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        setAlert(errorResponse.message || "Failed to save budget.");
+        setSeverity("error");
+        setAlertOpen(true);
+        return;
+      }
+
+      const savingGoals = await response.json();
+      dispatch(setSavingGoals({ savingGoals }));
+      setAlert("Saving Goal saved successfully.");
+      setSeverity("success");
+      setAlertOpen(true);
+      onSubmitProps.resetForm();
+    } catch (error) {
+      setAlert("An error occurred. Please try again.");
+      setSeverity("error");
+      setAlertOpen(true);
+    }
   };
 
   return (
@@ -142,7 +158,7 @@ const AddSavingGoal = () => {
             handleSubmit,
             setFieldValue,
           }) => (
-            <form>
+            <form onSubmit={handleSubmit}>
               <Box
                 display="grid"
                 gap="30px"
@@ -244,6 +260,14 @@ const AddSavingGoal = () => {
           )}
         </Formik>
       </WidgetWrapper>
+      {alert && (
+        <Alerts
+          message={alert}
+          severity={severity}
+          open={alertOpen}
+          onClose={handleAlertClose}
+        />
+      )}
     </>
   );
 };

@@ -32,23 +32,15 @@ export const postSavingGoals = async (req, res) => {
       return;
     }
 
-    const {
-      goalName,
-      targetAmount,
-      currentAmount,
-      startDate,
-      endDate,
-      description,
-    } = req.body;
+    const { goalName, targetAmount, startDate, endDate } = req.body;
 
     const newSavingGoal = new SavingGoal({
       userId: user._id,
       goalName,
       targetAmount,
-      currentAmount,
+      currentAmount: 0,
       startDate,
       endDate,
-      description,
     });
 
     const savedSavingGoal = await newSavingGoal.save();
@@ -57,7 +49,7 @@ export const postSavingGoals = async (req, res) => {
       $push: { savingGoals: savedSavingGoal._id },
     });
 
-    const updatedSavingGoals = await SavingGoal.find();
+    const updatedSavingGoals = await SavingGoal.find({ userId: user._id });
 
     res.status(201).json(updatedSavingGoals);
   } catch (error) {

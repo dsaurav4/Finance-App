@@ -64,12 +64,6 @@ const UserSchema = new Schema(
         ref: "SavingGoal",
       },
     ],
-    budgetStreaks: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "BudgetStreak",
-      },
-    ],
     verifiedUser: {
       type: Boolean,
       default: false,

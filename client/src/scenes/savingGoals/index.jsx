@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { setSavingGoals } from "../../state";
 import { isBefore, isAfter, isWithinInterval } from "date-fns";
 import SavingGoalProgress from "../widgets/SavingGoalProgress";
+import WidgetWrapper from "../../components/WidgetWrapper";
 
 const SavingGoals = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -21,7 +22,7 @@ const SavingGoals = () => {
   const token = useSelector((state) => state.token);
   const dispatch = useDispatch();
 
-  const goalTypes = ["Active", "Expired"];
+  const goalTypes = ["Active/Upcoming", "Expired/Complete"];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const { palette } = useTheme();
@@ -60,7 +61,7 @@ const SavingGoals = () => {
     }
   };
 
-  const [savingGoalType, setSavingGoalType] = useState("active");
+  const [savingGoalType, setSavingGoalType] = useState("Active/Upcoming");
 
   useEffect(() => {
     getSavingGoals();
@@ -68,7 +69,7 @@ const SavingGoals = () => {
 
   const savingGoals = useSelector((state) => state.savingGoals);
 
-  const today = new Date(); // Get today's date
+  const today = new Date();
 
   const activeGoals = savingGoals.filter((goal) => {
     const startDate = new Date(goal.startDate);
@@ -86,15 +87,13 @@ const SavingGoals = () => {
     return isAfter(startDate, today);
   });
 
-  const expiredGoals = savingGoals.filter((goal) => {
+  const incompleteGoals = savingGoals.filter((goal) => {
     const endDate = new Date(goal.endDate);
-    const startDate = new Date(goal.startDate);
+    return isBefore(endDate, today) && goal.currentAmount < goal.targetAmount;
+  });
 
-    return (
-      isBefore(endDate, today) ||
-      (isWithinInterval(today, { start: startDate, end: endDate }) &&
-        goal.currentAmount >= goal.targetAmount)
-    );
+  const completedGoals = savingGoals.filter((goal) => {
+    return goal.currentAmount >= goal.targetAmount;
   });
 
   return (
@@ -115,7 +114,12 @@ const SavingGoals = () => {
         <AddSavingGoal />
         <Box
           gap="0.5rem"
-          sx={{ display: "flex", gap: "1rem", marginTop: "1rem" }}
+          sx={{
+            display: "flex",
+            gap: "1rem",
+            marginY: `${!isNonMobileScreens ? "2rem" : "1rem"}`,
+            marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
+          }}
         >
           <Typography sx={{ display: "flex", alignItems: "center" }}>
             SELECT GOAL TYPE
@@ -132,7 +136,7 @@ const SavingGoals = () => {
                 borderRadius: "8px",
                 padding: "8px 16px",
                 color: "inherit",
-                width: "5rem",
+                width: "10rem",
               }}
             >
               {savingGoalType}
@@ -165,16 +169,120 @@ const SavingGoals = () => {
             gap: "2rem",
           }}
         >
-          {activeGoals.length > 0 ? (
-            activeGoals.map((goal) => (
-              <SavingGoalProgress goal={goal} key={goal._id} />
-            ))
-          ) : (
-            <WidgetWrapper sx={{ p: "3rem" }}>
-              <Typography sx={{ textAlign: "center" }}>
-                No Active Budgets
+          {savingGoalType === "Active/Upcoming" ? (
+            <>
+              <Typography
+                variant="h2"
+                sx={{
+                  fontWeight: "bolder",
+                  textAlign: "center",
+                  width: "100%",
+                  marginTop: "2rem",
+                }}
+              >
+                CURRENT SAVING PLANS
               </Typography>
-            </WidgetWrapper>
+              {activeGoals.length > 0 ? (
+                activeGoals.map((goal) => (
+                  <SavingGoalProgress goal={goal} active={true} />
+                ))
+              ) : (
+                <WidgetWrapper
+                  sx={{
+                    paddingY: "2rem",
+                    marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
+                  }}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    NO ACTIVE SAVING PLANS!
+                  </Typography>
+                </WidgetWrapper>
+              )}
+              <Typography
+                variant="h2"
+                sx={{
+                  fontWeight: "bolder",
+                  textAlign: "center",
+                  width: "100%",
+                  marginTop: "2rem",
+                }}
+              >
+                UPCOMING SAVING PLANS
+              </Typography>
+              {upcomingGoals.length > 0 ? (
+                upcomingGoals.map((goal) => (
+                  <SavingGoalProgress goal={goal} upcoming={true} />
+                ))
+              ) : (
+                <WidgetWrapper
+                  sx={{
+                    paddingBottom: "3rem",
+                    marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
+                  }}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    NO UPCOMING SAVING PLANS!
+                  </Typography>
+                </WidgetWrapper>
+              )}
+            </>
+          ) : (
+            <>
+              <Typography
+                variant="h2"
+                sx={{
+                  fontWeight: "bolder",
+                  textAlign: "center",
+                  width: "100%",
+                  marginTop: "2rem",
+                }}
+              >
+                COMPLETED SAVING PLANS
+              </Typography>
+              {completedGoals.length > 0 ? (
+                completedGoals.map((goal) => (
+                  <SavingGoalProgress goal={goal} expired={true} />
+                ))
+              ) : (
+                <WidgetWrapper
+                  sx={{
+                    paddingBottom: "3rem",
+                    marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
+                  }}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    NO COMPLETED SAVING PLANS!
+                  </Typography>
+                </WidgetWrapper>
+              )}
+              <Typography
+                variant="h2"
+                sx={{
+                  fontWeight: "bolder",
+                  textAlign: "center",
+                  width: "100%",
+                  marginTop: "2rem",
+                }}
+              >
+                INCOMPLETE SAVING PLANS
+              </Typography>
+              {incompleteGoals.length > 0 ? (
+                incompleteGoals.map((goal) => (
+                  <SavingGoalProgress goal={goal} expired={true} />
+                ))
+              ) : (
+                <WidgetWrapper
+                  sx={{
+                    paddingBottom: "3rem",
+                    marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
+                  }}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    NO INCOMPLETE SAVING PLANS!
+                  </Typography>
+                </WidgetWrapper>
+              )}
+            </>
           )}
         </Box>
       </Box>

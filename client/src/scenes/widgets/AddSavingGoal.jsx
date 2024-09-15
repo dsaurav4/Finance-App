@@ -129,18 +129,20 @@ const AddSavingGoal = () => {
             sx={{
               fontWeight: "bolder",
               textTransform: "uppercase",
+              textAlign: "center",
             }}
             variant="h3"
           >
-            Start saving for your{" "}
+            Start saving for your <br></br>
             <span
               style={{
                 color: "#4CAF50",
                 transition: "opacity 0.5s ease-in-out",
                 opacity: 1,
+                alignContent: "center",
               }}
             >
-              {goalsList[currentGoalIndex]}!
+              {goalsList[currentGoalIndex]}
             </span>
           </Typography>
         </FlexBetween>

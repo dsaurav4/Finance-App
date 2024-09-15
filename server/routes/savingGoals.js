@@ -17,7 +17,7 @@ router.get("/:userId", verifyToken, getSavingGoals);
 router.post("/:userId", verifyToken, upload.none(), postSavingGoals);
 
 /* UPDATE */
-router.patch("/:userId/:id", verifyToken, updateSavingGoal);
+router.patch("/:userId/:id", verifyToken, upload.none(), updateSavingGoal);
 
 /* DELETE */
 router.delete("/:userId/:id", verifyToken, deleteSavingGoals);

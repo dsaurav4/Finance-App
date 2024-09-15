@@ -135,8 +135,10 @@ const AddBudget = () => {
           <Typography
             sx={{
               fontWeight: "bolder",
-              fontSize: "1rem",
+              textTransform: "uppercase",
+              textAlign: "center",
             }}
+            variant="h3"
           >
             Add a New Budget
           </Typography>

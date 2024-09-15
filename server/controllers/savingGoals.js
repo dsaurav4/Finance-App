@@ -68,23 +68,19 @@ export const updateSavingGoal = async (req, res) => {
       return;
     }
 
-    const {
-      goalName,
-      targetAmount,
-      currentAmount,
-      startDate,
-      endDate,
-      description,
-    } = req.body;
+    const { addedMoney } = req.body;
+    const { currentAmount } = await SavingGoal.findById(id);
 
-    const updatedSavingGoal = await SavingGoal.findByIdAndUpdate(id, {
-      goalName,
-      targetAmount,
-      currentAmount,
-      startDate,
-      endDate,
-      description,
-    });
+    const newAmount = parseInt(addedMoney, 10) + parseInt(currentAmount, 10);
+
+    const updatedSavingGoal = await SavingGoal.findByIdAndUpdate(
+      id,
+      {
+        currentAmount: newAmount,
+      },
+      { new: true }
+    );
+
     res.status(200).json(updatedSavingGoal);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,10 +1,5 @@
 import express from "express";
-import {
-  getBudgets,
-  postBudget,
-  deleteBudget,
-  updateBudget,
-} from "../controllers/budget.js";
+import { getBudgets, postBudget, deleteBudget } from "../controllers/budget.js";
 import { verifyToken } from "../middleware/auth.js";
 import { upload } from "../middleware/multer.js";
 
@@ -15,9 +10,6 @@ router.get("/:userId/budgets", verifyToken, getBudgets);
 
 /* CREATE */
 router.post("/:userId/budgets", verifyToken, upload.none(), postBudget);
-
-/* UPDATE */
-router.patch("/budgets/:id", verifyToken, upload.none(), updateBudget);
 
 /* DELETE */
 router.delete("/:userId/:id", verifyToken, deleteBudget);

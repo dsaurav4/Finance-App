@@ -24,6 +24,10 @@ export const authSlice = createSlice({
     setLogout: (state) => {
       state.user = null;
       state.token = null;
+      state.incomes = [];
+      state.expenses = [];
+      state.budgets = [];
+      state.savingGoals = [];
     },
     setIncomes: (state, action) => {
       state.incomes = action.payload.incomes;

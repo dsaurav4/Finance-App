@@ -10,7 +10,7 @@ const BudgetChart = ({ budget }) => {
   const expenses = useSelector((state) => state.expenses);
 
   const data = getBudgetBreakdown(budget, expenses);
-
+  const valueFormatter = (value) => `$${value}`;
   return (
     <Box>
       <BarChart
@@ -19,6 +19,7 @@ const BudgetChart = ({ budget }) => {
           {
             dataKey: "expense",
             color: "#4CAF50",
+            valueFormatter,
           },
         ]}
         xAxis={[

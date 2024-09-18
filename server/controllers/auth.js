@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import fs from "fs";
 import User from "../models/User.js";
 import Verification from "../models/Verification..js";
+import ResetCode from "../models/ResetCodes.js";
 import jwt from "jsonwebtoken";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 import sendMail from "../utils/sendMail.js";
@@ -27,13 +28,13 @@ export const register = async (req, res) => {
         .json({ message: "Username or email already exists" });
     }
 
-    // const isEmailExist = await validate(email);
+    const isEmailExist = await validate(email);
 
-    // if (!isEmailExist.valid) {
-    //   return res
-    //     .status(409)
-    //     .json({ message: "Email is not valid! Please enter a valid email." });
-    // }
+    if (!isEmailExist.valid) {
+      return res
+        .status(409)
+        .json({ message: "Email is not valid! Please enter a valid email." });
+    }
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
@@ -75,7 +76,7 @@ export const register = async (req, res) => {
       const PORT = process.env.PORT || 6001;
       const url = `http://localhost:${PORT}`;
 
-      sendMail(
+      await sendMail(
         savedUser.email,
         "Verify Email For Your FINANCE APP",
         "Please click the link below to verify your email.",
@@ -144,7 +145,7 @@ export const login = async (req, res) => {
 
         const url = `http://localhost:${PORT}`;
 
-        sendMail(
+        await sendMail(
           user.email,
           "Verify Email For Your FINANCE APP",
           "Please click the link below to verify your email.",
@@ -188,6 +189,7 @@ export const login = async (req, res) => {
   }
 };
 
+/* VERIFY USER */
 export const verifyCode = async (req, res) => {
   try {
     const { userId, code } = req.params;
@@ -220,5 +222,108 @@ export const verifyCode = async (req, res) => {
     res.status(200).sendFile(filePath);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+/* RESET PASSWORD */
+export const resetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Email does not exist." });
+    }
+
+    const oldResetCode = await ResetCode.findOne({ userId: user._id });
+
+    if (oldResetCode) await ResetCode.findByIdAndDelete(oldResetCode._id);
+
+    const randomCode = Math.floor(10000 + Math.random() * 90000)
+      .toString()
+      .padStart(5, "0");
+
+    const codeSalt = await bcrypt.genSalt();
+    const codeHash = await bcrypt.hash(randomCode, codeSalt);
+
+    const newReset = new ResetCode({
+      userId: user._id,
+      code: codeHash,
+      email: user.email,
+    });
+
+    await newReset.save();
+
+    await sendMail(
+      user.email,
+      "RESET YOUR PASSWORD FOR THE FINANCE APP",
+      "Your reset code is",
+      `<b>${randomCode}</b>
+      <br>
+      <i>The code expires in <b>1 hour</b>.</i>`
+    );
+
+    return res.status(200).json(newReset.userId);
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+/* VERIFY RESET CODE */
+export const verifyResetCode = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+
+    const reset = await ResetCode.findOne({ userId });
+
+    if (!reset) {
+      return res.status(400).json({ message: "Reset Code not available." });
+    }
+
+    const isMatch = await bcrypt.compare(code, reset.code);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Reset Code not valid." });
+    }
+
+    return res.status(200).json({ message: "Reset code verified!" });
+  } catch (error) {
+    console.error("Error in verifyResetCode:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+/* UPDATE PASSWORD */
+export const updatePassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+
+    const { password } = req.body;
+
+    const passwordSalt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, passwordSalt);
+
+    await User.findByIdAndUpdate(
+      userId,
+      { password: passwordHash },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Password Changed Succesfully" });
+  } catch (error) {
+    console.error("Error in updatePassword:", error);
+    return res.status(500).json({ message: "Internal server error." });
   }
 };

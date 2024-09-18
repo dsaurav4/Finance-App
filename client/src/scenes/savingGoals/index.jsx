@@ -7,6 +7,7 @@ import {
   Button,
   Menu,
   MenuItem,
+  LinearProgress,
 } from "@mui/material";
 import AddSavingGoal from "../widgets/AddSavingGoal";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,6 +16,7 @@ import { setSavingGoals } from "../../state";
 import { isBefore, isAfter, isWithinInterval } from "date-fns";
 import SavingGoalProgress from "../widgets/SavingGoalProgress";
 import WidgetWrapper from "../../components/WidgetWrapper";
+import FlexBetween from "../../components/FlexBetween";
 
 const SavingGoals = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -39,32 +41,10 @@ const SavingGoals = () => {
     setAnchorEl(null);
   };
 
-  const getSavingGoals = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3001/savingGoals/${userId}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) {
-        console.log("Error Occured!");
-        return;
-      }
-
-      const data = await response.json();
-      dispatch(setSavingGoals({ savingGoals: data }));
-    } catch (error) {
-      console.log("An unexpected error occured: ", error);
-    }
-  };
-
   const [savingGoalType, setSavingGoalType] = useState("Active/Upcoming");
 
   useEffect(() => {
-    getSavingGoals();
+    getSavingGoals(userId, token, dispatch, setSavingGoals);
   }, []);
 
   const savingGoals = useSelector((state) => state.savingGoals);
@@ -184,7 +164,11 @@ const SavingGoals = () => {
               </Typography>
               {activeGoals.length > 0 ? (
                 activeGoals.map((goal) => (
-                  <SavingGoalProgress goal={goal} active={true} />
+                  <SavingGoalProgress
+                    goal={goal}
+                    active={true}
+                    key={goal._id}
+                  />
                 ))
               ) : (
                 <WidgetWrapper
@@ -211,7 +195,11 @@ const SavingGoals = () => {
               </Typography>
               {upcomingGoals.length > 0 ? (
                 upcomingGoals.map((goal) => (
-                  <SavingGoalProgress goal={goal} upcoming={true} />
+                  <SavingGoalProgress
+                    goal={goal}
+                    upcoming={true}
+                    key={goal._id}
+                  />
                 ))
               ) : (
                 <WidgetWrapper
@@ -241,7 +229,11 @@ const SavingGoals = () => {
               </Typography>
               {completedGoals.length > 0 ? (
                 completedGoals.map((goal) => (
-                  <SavingGoalProgress goal={goal} expired={true} />
+                  <SavingGoalProgress
+                    goal={goal}
+                    expired={true}
+                    key={goal._id}
+                  />
                 ))
               ) : (
                 <WidgetWrapper
@@ -268,7 +260,11 @@ const SavingGoals = () => {
               </Typography>
               {incompleteGoals.length > 0 ? (
                 incompleteGoals.map((goal) => (
-                  <SavingGoalProgress goal={goal} expired={true} />
+                  <SavingGoalProgress
+                    goal={goal}
+                    expired={true}
+                    key={goal._id}
+                  />
                 ))
               ) : (
                 <WidgetWrapper
@@ -291,3 +287,75 @@ const SavingGoals = () => {
 };
 
 export default SavingGoals;
+
+export const getSavingGoals = async (
+  userId,
+  token,
+  dispatch,
+  setSavingGoals
+) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3001/savingGoals/${userId}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!response.ok) {
+      console.log("Error Occured!");
+      return;
+    }
+
+    const data = await response.json();
+    dispatch(setSavingGoals({ savingGoals: data }));
+  } catch (error) {
+    console.log("An unexpected error occured: ", error);
+  }
+};
+
+export const DashboardSaving = () => {
+  const today = new Date();
+  const savingGoals = useSelector((state) => state.savingGoals);
+
+  const activeGoals = savingGoals.filter((goal) => {
+    const startDate = new Date(goal.startDate);
+    const endDate = new Date(goal.endDate);
+
+    return (
+      isWithinInterval(today, { start: startDate, end: endDate }) &&
+      goal.currentAmount < goal.targetAmount &&
+      goal.targetAmount > 0 // Prevent division by 0 in LinearProgress
+    );
+  });
+
+  return (
+    <WidgetWrapper width="100%" height="100%" sx={{ p: "3rem" }}>
+      <FlexBetween sx={{ flexDirection: "column", width: "100%" }}>
+        <Typography
+          sx={{ fontWeight: "bolder", marginBottom: "1rem" }}
+          variant="h6"
+        >
+          Recent Saving Goals
+        </Typography>
+        {activeGoals.length === 0 ? (
+          <Typography>No active saving goals.</Typography>
+        ) : (
+          activeGoals.map((goal) => (
+            <div key={goal._id} style={{ width: "100%", marginBottom: "1rem" }}>
+              <Typography variant="body1">
+                {goal.goalName} (${goal.currentAmount} / ${goal.targetAmount})
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={(goal.currentAmount / goal.targetAmount) * 100}
+                sx={{ width: "100%" }}
+              />
+            </div>
+          ))
+        )}
+      </FlexBetween>
+    </WidgetWrapper>
+  );
+};

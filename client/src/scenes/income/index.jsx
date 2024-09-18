@@ -18,25 +18,8 @@ const Income = () => {
   const dispatch = useDispatch();
   const [year, setYear] = useState(new Date().getFullYear());
 
-  const getIncomes = async () => {
-    const response = await fetch(
-      `http://localhost:3001/transactions/${userId}/income`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    try {
-      const data = await response.json();
-      if (!data.message) dispatch(setIncomes({ incomes: data }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    getIncomes();
+    getIncomes(userId, token, dispatch, setIncomes);
   }, []);
 
   const incomes = useSelector((state) => state.incomes);
@@ -160,6 +143,23 @@ const Income = () => {
 };
 
 export default Income;
+
+export const getIncomes = async (userId, token, dispatch, setIncomes) => {
+  const response = await fetch(
+    `http://localhost:3001/transactions/${userId}/income`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+
+  try {
+    const data = await response.json();
+    if (!data.message) dispatch(setIncomes({ incomes: data }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const findHighestIncome = (incomes) => {
   const currentDate = new Date();

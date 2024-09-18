@@ -31,7 +31,7 @@ const Chart = ({ transactions, transactionsType, year, setYear }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const valueFormatter = (value) => `$${value}`;
   return (
     <WidgetWrapper>
       <Button
@@ -81,6 +81,7 @@ const Chart = ({ transactions, transactionsType, year, setYear }) => {
               transactionsType === "income" ? "Income" : "Expense"
             }`,
             color: transactionsType === "income" ? "#4CAF50" : "#FF474C",
+            valueFormatter,
           },
         ]}
         layout="vertical"

@@ -10,7 +10,7 @@ import { useState } from "react";
 import { setBudgets } from "../../state";
 import Alerts from "../../components/Alerts.jsx";
 
-const BudgetProgress = ({ budget, showChart, active, expired, upcoming }) => {
+const BudgetProgress = ({ budget, showChart, active, expired }) => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const dispatch = useDispatch();
   const expenses = useSelector((state) => state.expenses);
@@ -337,7 +337,7 @@ const BudgetProgress = ({ budget, showChart, active, expired, upcoming }) => {
 
 export default BudgetProgress;
 
-const calculateTotalBudget = (budget) => {
+export const calculateTotalBudget = (budget) => {
   const { startDate, endDate, amount, period } = budget;
   const start = parseISO(startDate);
   const end = parseISO(endDate);
@@ -356,7 +356,7 @@ const calculateTotalBudget = (budget) => {
   return totalBudget;
 };
 
-const calculateTotalExpenses = (budget, expenses, active, expired) => {
+export const calculateTotalExpenses = (budget, expenses, active, expired) => {
   const today = new Date();
   const { startDate } = budget;
   const start = parseISO(startDate);

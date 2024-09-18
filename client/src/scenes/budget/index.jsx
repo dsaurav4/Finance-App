@@ -15,6 +15,13 @@ import { setBudgets } from "../../state/index.js";
 import BudgetProgress from "../widgets/BudgetProgress.jsx";
 import { parseISO, isWithinInterval } from "date-fns";
 import WidgetWrapper from "../../components/WidgetWrapper.jsx";
+import FlexBetween from "../../components/FlexBetween.jsx";
+import {
+  calculateTotalBudget,
+  calculateTotalExpenses,
+} from "../widgets/BudgetProgress.jsx";
+import { Gauge, gaugeClasses } from "@mui/x-charts";
+import { useNavigate } from "react-router-dom";
 
 const Budget = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -40,33 +47,8 @@ const Budget = () => {
     setAnchorEl(null);
   };
 
-  const getBudgets = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3001/budgets/${userId}/budgets`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        console.log("Error Occured!");
-        return;
-      }
-
-      const data = await response.json();
-      dispatch(setBudgets({ budgets: data }));
-    } catch (error) {
-      console.log("An error occured!");
-      return;
-    }
-  };
-
   useEffect(() => {
-    getBudgets();
+    getBudgets(userId, token, dispatch, setBudgets);
   }, []);
 
   const budgets = useSelector((state) => state.budgets);
@@ -268,6 +250,136 @@ const Budget = () => {
 };
 
 export default Budget;
+
+export const getBudgets = async (userId, token, dispatch, setBudgets) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3001/budgets/${userId}/budgets`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.log("Error Occured!");
+      return;
+    }
+
+    const data = await response.json();
+    dispatch(setBudgets({ budgets: data }));
+  } catch (error) {
+    console.log("An error occured!");
+    return;
+  }
+};
+
+export const DashboardBudget = () => {
+  const budgets = useSelector((state) => state.budgets);
+  const expenses = useSelector((state) => state.expenses);
+
+  const weeklyBudgets = budgets.filter((budget) => budget.period === "Weekly");
+  const monthlyBudgets = budgets.filter(
+    (budget) => budget.period === "Monthly"
+  );
+
+  const navigate = useNavigate();
+  const { palette } = useTheme();
+  const periods = ["Weekly", "Monthly"];
+  const [period, setPeriod] = useState("Weekly");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePeriodSelect = (period) => {
+    setPeriod(period);
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const budget = getActiveBudget(
+    period === "Monthly" ? monthlyBudgets : weeklyBudgets
+  );
+
+  const totalBudget = budget ? calculateTotalBudget(budget) : 0;
+
+  const totalExpenses = budget
+    ? calculateTotalExpenses(budget, expenses, true, false)
+    : 0;
+
+  return (
+    <WidgetWrapper width="100%">
+      <Button
+        id="period-button"
+        aria-controls={open ? "period-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+        sx={{
+          border: `2px solid ${palette.neutral.dark}`,
+          borderRadius: "8px",
+          padding: "8px 16px",
+          color: "inherit",
+        }}
+      >
+        {period}
+      </Button>
+      <Menu
+        id="period-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "period-button",
+        }}
+      >
+        {periods.map((period) => (
+          <MenuItem key={period} onClick={() => handlePeriodSelect(period)}>
+            {period}
+          </MenuItem>
+        ))}
+      </Menu>
+      <FlexBetween sx={{ flexDirection: "column", width: "100%" }}>
+        <Typography
+          sx={{ fontWeight: "bolder", marginBottom: "1rem" }}
+          variant="h6"
+        >
+          Active {period} Budget Plan
+        </Typography>
+        {budget ? (
+          <Gauge
+            width={200}
+            height={200}
+            value={totalExpenses}
+            valueMax={totalBudget}
+            text={({ value, valueMax }) => `$${value} / $${valueMax}`}
+            sx={{
+              [`& .${gaugeClasses.valueText}`]: {
+                fontSize: 13,
+                transform: "translate(0px, 0px)",
+              },
+              [`& .${gaugeClasses.valueArc}`]: {
+                fill: totalExpenses > totalBudget ? "red" : "#52b202",
+              },
+              cursor: "pointer",
+            }}
+            onClick={() => navigate("/budget")}
+          ></Gauge>
+        ) : (
+          <Typography>No Active {period} Plan.</Typography>
+        )}
+      </FlexBetween>
+    </WidgetWrapper>
+  );
+};
 
 const getActiveBudget = (budgets) => {
   const today = new Date();

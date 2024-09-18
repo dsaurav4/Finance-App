@@ -10,6 +10,7 @@ import Income from "./scenes/income";
 import Expense from "./scenes/expense";
 import Budget from "./scenes/budget";
 import SavingGoals from "./scenes/savingGoals";
+import Reset from "./scenes/reset";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -43,6 +44,7 @@ function App() {
               path="/savingGoal"
               element={isAuth ? <SavingGoals /> : <Navigate to="/" />}
             />
+            <Route path="/reset/:userId" element={<Reset />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

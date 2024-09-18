@@ -63,32 +63,6 @@ export const postBudget = async (req, res) => {
   }
 };
 
-/* UPDATE */
-export const updateBudget = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const { period, amount, startDate, endDate } = req.body;
-
-    const updatedBudget = await Budget.findByIdAndUpdate(
-      id,
-      {
-        period,
-        amount,
-        startDate,
-        endDate,
-      },
-      {
-        new: true,
-      }
-    );
-
-    res.status(200).json(updatedBudget);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
 /* DELETE */
 export const deleteBudget = async (req, res) => {
   try {

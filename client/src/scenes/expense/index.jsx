@@ -18,21 +18,8 @@ const Expense = () => {
   const dispatch = useDispatch();
   const [year, setYear] = useState(new Date().getFullYear());
 
-  const getExpenses = async () => {
-    const response = await fetch(
-      `http://localhost:3001/transactions/${userId}/expense`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    const data = await response.json();
-
-    dispatch(setExpenses({ expenses: data }));
-  };
-
   useEffect(() => {
-    getExpenses();
+    getExpenses(userId, token, dispatch, setExpenses);
   }, []);
 
   const expenses = useSelector((state) => state.expenses);
@@ -161,6 +148,19 @@ const Expense = () => {
 };
 
 export default Expense;
+
+export const getExpenses = async (userId, token, dispatch, setExpenses) => {
+  const response = await fetch(
+    `http://localhost:3001/transactions/${userId}/expense`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  const data = await response.json();
+
+  dispatch(setExpenses({ expenses: data }));
+};
 
 const findHighestExpense = (expenses) => {
   const currentDate = new Date();

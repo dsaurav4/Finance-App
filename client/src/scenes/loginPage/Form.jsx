@@ -22,7 +22,12 @@ const registerSchema = yup.object().shape({
   lastName: yup.string().required("required"),
   username: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .matches(/[A-Z]/, "Password must contain at least 1 uppercase letter")
+    .matches(/\d/, "Password must contain at least 1 digit")
+    .required("New password is required"),
   picture: yup.mixed().required("Picture is required"),
 });
 
@@ -140,10 +145,45 @@ const Form = ({ pageType, setPageType }) => {
     }
   };
 
+  const resetPassword = async (values, onSubmitProps) => {
+    const formData = new FormData();
+
+    formData.append("email", values.email);
+
+    try {
+      const resetPasswordResponse = await fetch(
+        "http://localhost:3001/auth/resetPassword",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (resetPasswordResponse.status != 200) {
+        const data = await resetPasswordResponse.json();
+        setAlert(data.message);
+        setAlertSeverity("error");
+        setAlertOpen(true);
+        onSubmitProps.resetForm();
+        return;
+      }
+
+      const userId = await resetPasswordResponse.json();
+      navigate(`/reset/${userId}`);
+      return;
+    } catch (error) {
+      setAlert(error.message);
+      setAlertSeverity("error");
+      setAlertOpen(true);
+      onSubmitProps.resetForm();
+      return;
+    }
+  };
+
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
-    // if (isForgotPassword) await
+    if (isForgotPassword) await resetPassword(values, onSubmitProps);
   };
 
   const handleAlertClose = (event, reason) => {

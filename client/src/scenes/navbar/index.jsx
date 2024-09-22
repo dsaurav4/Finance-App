@@ -277,7 +277,7 @@ const Navbar = () => {
               {/* SAVING GOALS */}
               <Button
                 sx={{ color: "inherit" }}
-                onClick={() => navigate("/savingGoals")}
+                onClick={() => navigate("/savingGoal")}
               >
                 <FlexBetween gap="1rem">
                   <Savings sx={{ fontSize: "25px" }} />

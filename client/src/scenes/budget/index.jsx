@@ -23,6 +23,39 @@ import {
 import { Gauge, gaugeClasses } from "@mui/x-charts";
 import { useNavigate } from "react-router-dom";
 
+/**/
+/*
+NAME
+
+        Budget - renders the budget tracking interface, allowing the user to select
+        between weekly and monthly budget periods, and view active, expired, and 
+        upcoming budgets.
+
+SYNOPSIS
+
+        Budget();
+
+DESCRIPTION
+
+        This component fetches and displays the user's budget plans. It allows the
+        user to switch between "Weekly" and "Monthly" budget periods, and view
+        budgets in three categories: active, expired, and upcoming. The selection
+        of the period is controlled via a button and menu.
+
+        The component makes use of React hooks, including useState, useEffect, 
+        and useSelector to manage state and retrieve user data and budget plans 
+        from the Redux store.
+
+        It displays the following sections:
+        - Active Budget Plans
+        - Expired Budget Plans
+        - Upcoming Budget Plans
+
+RETURNS
+
+        The component returns a JSX element containing the budget tracking interface.
+*/
+/**/
 const Budget = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const userId = useSelector((state) => state.user._id);
@@ -34,15 +67,80 @@ const Budget = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const { palette } = useTheme();
+
+  /**/
+  /*
+  NAME
+
+          handleClick - sets the anchor element for the period selection menu.
+
+  SYNOPSIS
+
+          handleClick( event );
+              event   --> the event object from the click action.
+
+  DESCRIPTION
+
+          This function captures the event when the user clicks on the period selection
+          button and sets the anchor element to open the corresponding menu.
+
+  RETURNS
+
+          No return value.
+  */
+  /**/
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  /**/
+  /*
+  NAME  
+
+          handlePeriodSelect - handles the selection of a period from the menu.
+
+  SYNOPSIS  
+
+          handlePeriodSelect( period );
+              period   --> the selected period from the menu (weekly or monthly).
+
+  DESCRIPTION
+
+          This function updates the state of the selected period and closes the 
+          menu.
+
+  RETURNS 
+
+          No return value.
+
+  */
+  /**/
   const handlePeriodSelect = (period) => {
     setPeriod(period);
     handleClose();
   };
 
+  /**/
+  /*
+  NAME
+
+          handleClose - closes the menu.
+
+  SYNOPSIS
+
+          handleClose( event );
+              event   --> the event object from the click action.
+
+  DESCRIPTION
+
+          This function closes the menu.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -73,6 +171,7 @@ const Budget = () => {
           marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
         }}
       >
+        {/* Add Budget Component */}
         <AddBudget />
         <Box
           gap="0.5rem"
@@ -126,6 +225,7 @@ const Budget = () => {
             gap: "2rem",
           }}
         >
+          {/* Active Budget Plans */}
           <Typography
             variant="h2"
             sx={{
@@ -159,6 +259,7 @@ const Budget = () => {
             gap: "2rem",
           }}
         >
+          {/* Expired Budget Plans */}
           <Typography
             variant="h2"
             sx={{
@@ -206,6 +307,7 @@ const Budget = () => {
             gap: "2rem",
           }}
         >
+          {/* Upcoming Budget Plans */}
           <Typography
             variant="h2"
             sx={{
@@ -251,6 +353,32 @@ const Budget = () => {
 
 export default Budget;
 
+/**/
+/*
+NAME
+
+        getBudgets - fetches budget data for the specified user from the server.
+
+SYNOPSIS
+
+        getBudgets( userId, token, dispatch, setBudgets );
+            userId     --> the ID of the user whose budgets are to be fetched.
+            token      --> the authentication token for the API request.
+            dispatch   --> the Redux dispatch function for updating the state.
+            setBudgets --> action creator function for setting the budgets in the state.
+
+DESCRIPTION
+
+        This function makes an asynchronous GET request to retrieve the user's budgets
+        from the server. It sends the user's ID and token in the request header for
+        authorization. If the request is successful, it updates the Redux state with
+        the fetched budget data. In case of failure, an error is logged to the console.
+
+RETURNS
+
+        No return value.
+*/
+/**/
 export const getBudgets = async (userId, token, dispatch, setBudgets) => {
   try {
     const response = await fetch(
@@ -276,6 +404,30 @@ export const getBudgets = async (userId, token, dispatch, setBudgets) => {
   }
 };
 
+/**/
+/*
+NAME
+
+        DashboardBudget - a functional component that renders a dashboard for budget
+        plans.
+
+SYNOPSIS
+
+        DashboardBudget();
+          
+DESCRIPTION
+
+        This component renders a dashboard for budget plans. It displays budget
+        plans for weekly and monthly periods, as well as the total budget and
+        remaining budget. It also includes a button that allows the user to add
+        new budget plans.
+
+RETURNS
+
+        A React component that displays the dashboard for budget plans.
+
+*/
+/**/
 export const DashboardBudget = () => {
   const budgets = useSelector((state) => state.budgets);
   const expenses = useSelector((state) => state.expenses);
@@ -292,31 +444,106 @@ export const DashboardBudget = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  /**/
+  /*
+  NAME  
+
+          handleClick - opens the menu when the button is clicked.
+
+  SYNOPSIS
+
+          handleClick(event);
+              event --> the event that triggered the button click.
+
+  DESCRIPTION 
+
+          This function opens the menu when the button is clicked. It sets the  
+          anchor element to the clicked element.
+
+  RETURNS
+
+          No return value.
+
+
+  */
+  /**/
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  /**/
+  /*
+  NAME  
+
+          handlePeriodSelect - handles the selection of a budget period.
+
+  SYNOPSIS
+
+          handlePeriodSelect(period);
+              period --> the selected budget period.  
+
+
+  DESCRIPTION
+
+          This function updates the state of the selected budget period and closes
+          the menu.
+
+  RETURNS
+
+          No return value.
+
+
+  */
+  /**/
   const handlePeriodSelect = (period) => {
     setPeriod(period);
     handleClose();
   };
 
+  /**/
+  /*
+  NAME
+
+          handleClose - closes the menu when an option is selected.
+
+
+  SYNOPSIS  
+
+          handleClose();
+              
+
+  DESCRIPTION
+
+          This function closes the menu when an option is selected. It is called
+          when the user selects an option from the menu.
+
+  RETURNS
+
+          No return value.
+
+
+  */
+  /**/
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  // get the active budget for the selected period
   const budget = getActiveBudget(
     period === "Monthly" ? monthlyBudgets : weeklyBudgets
   );
 
+  // calculate the total budget
   const totalBudget = budget ? calculateTotalBudget(budget) : 0;
 
+  // calculate the remaining budget
   const totalExpenses = budget
     ? calculateTotalExpenses(budget, expenses, true, false)
     : 0;
 
   return (
     <WidgetWrapper width="100%">
+      {/* The button and menu for selecting the budget period */}
       <Button
         id="period-button"
         aria-controls={open ? "period-menu" : undefined}
@@ -341,12 +568,14 @@ export const DashboardBudget = () => {
           "aria-labelledby": "period-button",
         }}
       >
+        {/* Create a menu item for each period in the periods array */}
         {periods.map((period) => (
           <MenuItem key={period} onClick={() => handlePeriodSelect(period)}>
             {period}
           </MenuItem>
         ))}
       </Menu>
+      {/* The active budget plan display */}
       <FlexBetween sx={{ flexDirection: "column", width: "100%" }}>
         <Typography
           sx={{ fontWeight: "bolder", marginBottom: "1rem" }}
@@ -354,6 +583,7 @@ export const DashboardBudget = () => {
         >
           Active {period} Budget Plan
         </Typography>
+        {/* Display a gauge if there is an active budget plan */}
         {budget ? (
           <Gauge
             width={200}
@@ -381,6 +611,30 @@ export const DashboardBudget = () => {
   );
 };
 
+/**/
+/*
+NAME
+
+        calculateTotalBudget - calculates the total budget for a budget plan. 
+
+SYNOPSIS
+
+        calculateTotalBudget(budget);
+            budget --> the budget plan.
+
+
+DESCRIPTION
+
+        This function calculates the total budget for a budget plan. It takes
+        in the budget plan and returns the total budget.
+
+RETURNS   
+
+        The total budget for the budget plan.
+
+
+*/
+/**/
 const getActiveBudget = (budgets) => {
   const today = new Date();
 
@@ -392,12 +646,57 @@ const getActiveBudget = (budgets) => {
   );
 };
 
+/**
+/*
+NAME
+
+        getExpiredBudgets - Retrieves a list of budgets that have an end date in the past.
+
+SYNOPSIS
+
+        getExpiredBudgets(budgets);
+            budgets --> An array of budget objects.
+
+
+DESCRIPTION 
+
+        This function retrieves a list of budgets that have an end date in the past.
+
+RETURNS
+
+        An array of budget objects with an end date in the past.
+
+
+*/
+/**/
 const getExpiredBudgets = (budgets) => {
   const today = new Date();
 
   return budgets.filter((budget) => parseISO(budget.endDate) < today);
 };
 
+/**
+/*
+NAME
+
+        getFutureBudgets - Retrieves a list of budgets that have a start date in the future.
+
+SYNOPSIS  
+
+        getFutureBudgets(budgets);
+            budgets --> An array of budget objects. 
+
+
+DESCRIPTION 
+
+        This function retrieves a list of budgets that have a start date in the future.
+
+RETURNS 
+
+        An array of budget objects with a start date in the future.
+
+*/
+/**/
 const getFutureBudgets = (budgets) => {
   const today = new Date();
 

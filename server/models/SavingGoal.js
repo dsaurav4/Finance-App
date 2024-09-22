@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// Schema for the SavingGoal collection in the database
 const SavingGoalSchema = new Schema(
   {
     userId: {

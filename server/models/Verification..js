@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// Verification schema for the database
 const VerificationSchema = new Schema(
   {
     userId: {

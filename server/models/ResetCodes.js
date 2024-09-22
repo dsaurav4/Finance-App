@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// Reset code schema for the database
 const ResetCodeSchema = new Schema(
   {
     userId: {

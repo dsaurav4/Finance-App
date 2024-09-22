@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// Expense schema for the database
 const ExpenseSchema = new Schema(
   {
     userId: {

@@ -25,6 +25,7 @@ import Alerts from "../../components/Alerts.jsx";
 import { setBudgets } from "../../state/index.js";
 import { addDays } from "date-fns";
 
+// validation schema for budget form
 const budgetSchema = yup.object().shape({
   period: yup
     .string()
@@ -45,6 +46,7 @@ const budgetSchema = yup.object().shape({
     .required("Date is required"),
 });
 
+// initial values for budget form
 const initialBudgetValues = {
   period: "",
   amount: "",
@@ -52,6 +54,34 @@ const initialBudgetValues = {
   startDate: null,
 };
 
+/**/
+/*
+NAME
+
+        AddBudget - a component for adding a new budget to the user's account.
+
+SYNOPSIS
+
+        AddBudget();
+
+DESCRIPTION
+
+        This component allows the user to create a new budget by filling out a form.
+        The user can select the budget period (Weekly or Monthly), specify the amount,
+        and choose the number of periods. Upon form submission, the data is sent to
+        the server via a POST request.
+
+        The handleFormSubmit function is responsible for processing the form submission.
+        It creates a FormData object, appends the form values, calculates the budget end
+        date, and sends the data to the server. If the server responds successfully,
+        the Redux state is updated with the new budget data. In case of an error, an 
+        alert is displayed.
+
+RETURNS
+
+        Returns JSX elements that render the form and handle budget creation.
+*/
+/**/
 const AddBudget = () => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
@@ -65,6 +95,31 @@ const AddBudget = () => {
   const budgetPeriods = ["Weekly", "Monthly"];
   const periodLength = ["1", "2", "3", "4", "5", "6"];
 
+  /**/
+  /*
+  NAME
+
+          handleFormSubmit - a function that handles the form submission for adding a new budget.
+
+  SYNOPSIS
+
+          handleFormSubmit(values, onSubmitProps);
+            values        --> the form values submitted by the user.
+            onSubmitProps --> the formik props for resetting the form.
+
+  DESCRIPTION
+
+          This function is called when the user submits the budget form. It creates a FormData
+          object, appends the form values, calculates the budget end date, and sends the data
+          to the server via a POST request. If the server responds successfully, the Redux state
+          is updated with the new budget data. In case of an error, an alert is displayed.
+
+  RETURNS
+
+          Returns void.
+
+  */
+  /**/
   const handleFormSubmit = async (values, onSubmitProps) => {
     const formData = new FormData();
     formData.append("period", values.period);
@@ -110,6 +165,31 @@ const AddBudget = () => {
       setAlertOpen(true);
     }
   };
+
+  /**/
+  /*
+  NAME
+
+          handleAlertClose - a function that handles the closing of the alert.
+
+  SYNOPSIS
+
+          handleAlertClose(event, reason);
+            event  --> the event object.
+            reason --> the reason for closing the alert.
+
+  DESCRIPTION
+
+          This function is called when the user closes the alert. It sets the alertOpen
+          state to false, hiding the alert. The alert can also be closed by clicking
+          outside the alert.
+
+  RETURNS
+
+          Returns void.
+
+  */
+  /**/
 
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -169,6 +249,7 @@ const AddBudget = () => {
                 }}
               >
                 <Box sx={{ gridColumn: "span 2" }}>
+                  {/* Period field */}
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
                       Period
@@ -213,6 +294,7 @@ const AddBudget = () => {
                   }}
                 />
                 <Box sx={{ gridColumn: "span 2" }}>
+                  {/* Period length field */}
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
                       Period Length
@@ -251,6 +333,7 @@ const AddBudget = () => {
                   </FormControl>
                 </Box>
                 <Box sx={{ gridColumn: "span 2" }}>
+                  {/* Start date field */}
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label="Start Date"
@@ -306,19 +389,47 @@ const AddBudget = () => {
 
 export default AddBudget;
 
+/**/
+/*
+NAME
+
+        calculateEndDate - a function that calculates the end date of a budget. 
+
+SYNOPSIS
+
+        calculateEndDate(startDate, period, noOfPeriod);
+          startDate    --> the start date of the budget.
+          period       --> the period of the budget (Weekly or Monthly).
+          noOfPeriod   --> the number of periods for the budget.
+
+DESCRIPTION
+
+        This function calculates the end date of a budget based on the given start date,
+        period, and number of periods. It calculates the end date by adding the number of
+        periods to the start date. The end date is returned as a Date object.
+
+RETURNS
+
+        Returns the end date of the budget as a Date object.
+
+*/
 const calculateEndDate = (startDate, period, noOfPeriod) => {
   let endDate;
   const daysInWeek = 7;
   const daysInMonth = 30;
 
+  // Calculate the end date based on the given start date, period, and number of periods.
   switch (period) {
     case "Weekly":
+      // Calculate the end date for a weekly period.
       endDate = addDays(new Date(startDate), noOfPeriod * daysInWeek - 1);
       break;
     case "Monthly":
+      // Calculate the end date for a monthly period.
       endDate = addDays(new Date(startDate), noOfPeriod * daysInMonth - 1);
       break;
     default:
+      // Set the end date to the start date if the period is invalid.
       endDate = new Date(startDate);
   }
 

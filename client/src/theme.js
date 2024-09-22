@@ -1,4 +1,6 @@
-// Extended color design tokens export
+// These color tokens are used in the theme to generate the colors
+// for the MUI components. The keys are the color names, and the
+// values are the hex color values.
 export const colorTokens = {
   grey: {
     0: "#FFFFFF",
@@ -12,9 +14,9 @@ export const colorTokens = {
     600: "#333333",
     700: "#1A1A1A",
     800: "#121212",
-    850: "#0F0F0F", // Additional shades
+    850: "#0F0F0F",
     900: "#0D0D0D",
-    950: "#0A0A0A", // Additional shades
+    950: "#0A0A0A",
     1000: "#000000",
   },
   primary: {
@@ -23,21 +25,21 @@ export const colorTokens = {
     200: "#A2C4FB",
     300: "#74A7F9",
     400: "#478AF8",
-    450: "#3A7CE6", // Additional shades
+    450: "#3A7CE6",
     500: "#1A6EF7",
     600: "#1558C5",
-    650: "#1148A3", // Additional shades
+    650: "#1148A3",
     700: "#104294",
     800: "#0B2C62",
     900: "#061631",
   },
   accent: {
-    50: "#FFE5E5", // Additional shades
+    50: "#FFE5E5",
     100: "#FFD2D2",
     200: "#FFA3A3",
     300: "#FF7474",
     400: "#FF4545",
-    450: "#FF2A2A", // Additional shades
+    450: "#FF2A2A",
     500: "#FF1616",
     600: "#CC1212",
     700: "#990D0D",
@@ -45,7 +47,7 @@ export const colorTokens = {
     900: "#330404",
   },
   success: {
-    50: "#E6F8E6", // New category for success messages or indicators
+    50: "#E6F8E6",
     100: "#CCF1CC",
     200: "#99E399",
     300: "#66D466",
@@ -57,7 +59,7 @@ export const colorTokens = {
     900: "#002600",
   },
   warning: {
-    50: "#FFF5E6", // New category for warning messages or indicators
+    50: "#FFF5E6",
     100: "#FFEBCC",
     200: "#FFD699",
     300: "#FFC166",
@@ -70,7 +72,7 @@ export const colorTokens = {
   },
 };
 
-// Extended mui theme settings
+// Generate a theme based on the mode
 export const themeSettings = (mode) => {
   return {
     palette: {
@@ -91,7 +93,7 @@ export const themeSettings = (mode) => {
             },
             background: {
               default: colorTokens.grey[900],
-              alt: colorTokens.grey[850], // Updated for more gradation
+              alt: colorTokens.grey[850],
             },
             success: {
               main: colorTokens.success[400],

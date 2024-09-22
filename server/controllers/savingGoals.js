@@ -2,6 +2,30 @@ import SavingGoal from "../models/SavingGoal.js";
 import User from "../models/User.js";
 
 /* GET */
+/**/
+/*
+
+NAME
+
+        getSavingGoals - Retrieves the saving goals for a specific user.
+
+SYNOPSIS
+
+        getSavingGoals(req, res)
+              req --> The request object containing the user's ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The getSavingGoals function retrieves the saving goals for a specific user by querying the 
+        database for saving goals that match the user's ID.
+
+RETURNS
+
+        Returns a JSON response containing the list of saving goals for the user.
+
+*/
+/**/
 export const getSavingGoals = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -21,6 +45,30 @@ export const getSavingGoals = async (req, res) => {
 };
 
 /* CREATE */
+/**/
+/*
+
+NAME
+
+        postSavingGoals - Creates a new saving goal for a specific user.
+
+SYNOPSIS
+
+        postSavingGoals(req, res)
+              req --> The request object containing the user's ID and the saving goal data.
+              res --> The response object.
+
+DESCRIPTION
+
+        The postSavingGoals function creates a new saving goal for a specific user by checking if the user exists, 
+        validating the saving goal data, and saving the saving goal to the database.
+
+RETURNS
+
+        Returns a JSON response containing the updated list of saving goals for the user.
+
+*/
+/**/
 export const postSavingGoals = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -58,6 +106,29 @@ export const postSavingGoals = async (req, res) => {
 };
 
 /* UPDATE */
+/**/
+/*
+
+NAME
+
+        updateSavingGoal - Updates the current amount of a saving goal by adding the amount specified in the request body.
+
+SYNOPSIS
+
+        updateSavingGoal(req, res)
+              req --> The request object containing the user's ID and the saving goal ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The updateSavingGoal function updates the current amount of a saving goal by adding the amount specified in the request body.
+
+RETURNS
+
+        Returns a JSON response containing the updated saving goal.
+
+*/
+/**/
 export const updateSavingGoal = async (req, res) => {
   try {
     const { userId, id } = req.params;
@@ -88,6 +159,29 @@ export const updateSavingGoal = async (req, res) => {
 };
 
 /* DELETE */
+/**/
+/*
+
+NAME
+
+        deleteSavingGoals - Deletes a saving goal by ID and updates the user's saving goals list.
+
+SYNOPSIS
+
+        deleteSavingGoals(req, res)
+              req --> The request object containing the user's ID and saving goal ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The deleteSavingGoals function deletes a saving goal by ID and updates the user's saving goals list.
+
+RETURNS
+
+        Returns a JSON response containing the updated list of saving goals for the user.
+
+*/
+/**/
 export const deleteSavingGoals = async (req, res) => {
   try {
     const { userId, id } = req.params;

@@ -18,25 +18,124 @@ import SavingGoalProgress from "../widgets/SavingGoalProgress";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import FlexBetween from "../../components/FlexBetween";
 
+/**/
+/*
+NAME
+
+        SavingGoals - The saving goals component.
+
+SYNOPSIS
+
+        SavingGoals()
+
+DESCRIPTION
+
+        The saving goals component is the main component of the application. It is
+        responsible for rendering the dashboard UI, including the chart, table, and
+        buttons for adding, editing, and deleting saving goals.
+
+RETURNS
+
+        The SavingGoals component.
+
+*/
+/**/
 const SavingGoals = () => {
+  // checks if the screen is a non-mobile screen
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  // gets the user's id and token from the state
   const userId = useSelector((state) => state.user._id);
   const token = useSelector((state) => state.token);
+  // gets the dispatch method from the state
   const dispatch = useDispatch();
 
+  // the different types of goals
   const goalTypes = ["Active/Upcoming", "Expired/Complete"];
+  // the anchor element for the menu
   const [anchorEl, setAnchorEl] = useState(null);
+  // whether the menu is open
   const open = Boolean(anchorEl);
+  // the current theme
   const { palette } = useTheme();
+
+  /**/
+  /*
+  NAME
+
+          handleClick - Handles the selection of a saving goal type from the
+          dropdown menu.
+
+  SYNOPSIS
+
+          handleClick(event);
+            event --> The event object.
+
+  DESCRIPTION
+
+          Handles the selection of a saving goal type from the dropdown menu by
+          setting the state of the selected saving goal type and closing the
+          menu.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  /**/
+  /*
+  NAME
+
+          handleGoalTypeSelect - Handles the selection of a saving goal type from
+          the dropdown menu.
+
+  SYNOPSIS
+
+          handleGoalTypeSelect(savingGoalType);
+            savingGoalType --> The selected saving goal type.
+
+  DESCRIPTION
+
+          Handles the selection of a saving goal type from the dropdown menu by
+          setting the state of the selected saving goal type and closing the
+          menu.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleGoalTypeSelect = (savingGoalType) => {
     setSavingGoalType(savingGoalType);
     handleClose();
   };
 
+  /**/
+  /*
+  NAME
+
+          handleClose - Closes the dropdown menu. 
+
+  SYNOPSIS
+
+          handleClose();
+
+
+  DESCRIPTION
+
+          Closes the dropdown menu.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -51,6 +150,9 @@ const SavingGoals = () => {
 
   const today = new Date();
 
+  // filter active goals
+  // a goal is active if its start date is before today and its end date is after today
+  // and its current amount is less than its target amount
   const activeGoals = savingGoals.filter((goal) => {
     const startDate = new Date(goal.startDate);
     const endDate = new Date(goal.endDate);
@@ -61,17 +163,23 @@ const SavingGoals = () => {
     );
   });
 
+  // filter upcoming goals
+  // a goal is upcoming if its start date is after today
   const upcomingGoals = savingGoals.filter((goal) => {
     const startDate = new Date(goal.startDate);
 
     return isAfter(startDate, today);
   });
 
+  // filter incomplete goals
+  // a goal is incomplete if its end date is before today and its current amount is less than its target amount
   const incompleteGoals = savingGoals.filter((goal) => {
     const endDate = new Date(goal.endDate);
     return isBefore(endDate, today) && goal.currentAmount < goal.targetAmount;
   });
 
+  // filter completed goals
+  // a goal is completed if its current amount is greater than or equal to its target amount
   const completedGoals = savingGoals.filter((goal) => {
     return goal.currentAmount >= goal.targetAmount;
   });
@@ -91,6 +199,7 @@ const SavingGoals = () => {
           marginX: `${isNonMobileScreens ? "12.5%" : undefined}`,
         }}
       >
+        {/* Add a new saving goal */}
         <AddSavingGoal />
         <Box
           gap="0.5rem"
@@ -288,6 +397,26 @@ const SavingGoals = () => {
 
 export default SavingGoals;
 
+/**/
+/*
+NAME
+    getSavingGoals - Fetch data from the server.  
+
+SYNOPSIS
+
+    getSavingGoals( userId, token, dispatch, setSavingGoals )
+      userId --> The ID of the user whose saving goals are being fetched.
+      token --> The authentication token for the user.
+      dispatch --> The Redux dispatch function.
+      setSavingGoals --> The function to update the state with the fetched saving goals.
+
+DESCRIPTION
+    Fetch data from the server using the getSavingGoals function.
+
+RETURNS
+    No return value.
+*/
+/**/
 export const getSavingGoals = async (
   userId,
   token,
@@ -315,6 +444,25 @@ export const getSavingGoals = async (
   }
 };
 
+/**/
+/*
+NAME
+       DashboardSaving - Renders the dashboard for saving goals.
+
+SYNOPSIS
+
+       DashboardSaving()
+
+DESCRIPTION
+
+       This function renders the dashboard for saving goals.
+
+RETURNS 
+
+       No return value.
+
+*/
+/**/
 export const DashboardSaving = () => {
   const today = new Date();
   const savingGoals = useSelector((state) => state.savingGoals);
@@ -339,9 +487,11 @@ export const DashboardSaving = () => {
         >
           Recent Saving Goals
         </Typography>
+        {/* If there are no active goals, display a message */}
         {activeGoals.length === 0 ? (
           <Typography>No active saving goals.</Typography>
         ) : (
+          /* Otherwise, map over the active goals and display a progress bar for each one */
           activeGoals.map((goal) => (
             <div key={goal._id} style={{ width: "100%", marginBottom: "1rem" }}>
               <Typography variant="body1">

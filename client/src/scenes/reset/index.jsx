@@ -7,6 +7,7 @@ import {
   TextField,
   Button,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { Check } from "@mui/icons-material";
 import { Formik } from "formik";
@@ -15,6 +16,7 @@ import * as yup from "yup";
 import { useParams, useNavigate } from "react-router-dom";
 import Alerts from "../../components/Alerts";
 
+// validation schema for the reset code form
 const resetCodeSchema = yup.object().shape({
   code: yup
     .string()
@@ -22,6 +24,7 @@ const resetCodeSchema = yup.object().shape({
     .required("Reset code is required"),
 });
 
+// validation schema for the new password form
 const newPasswordSchema = yup.object().shape({
   password: yup
     .string()
@@ -31,25 +34,71 @@ const newPasswordSchema = yup.object().shape({
     .required("New password is required"),
 });
 
+// initial values for the reset code form
 const initialValuesCode = {
   code: "",
 };
 
+// initial values for the new password form
 const initialValuesReset = {
   password: "",
 };
 
+/**/
+/*
+NAME
+
+        Reset - a component that displays a form for resetting a user's password. 
+
+SYNOPSIS
+
+        Reset( { userId } );
+          userId --> The ID of the user whose password is being reset.
+
+DESCRIPTION
+
+        This component displays a form for resetting a user's password. The form includes a reset code 
+        input and a new password input. When the form is submitted, the password is reset and the user 
+        is redirected to the login page.
+
+RETURNS
+
+        No return value.
+*/
+/**/
 const Reset = () => {
   const { userId } = useParams();
   const { palette } = useTheme();
   const isNonMobileScreens = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [isReset, setIsReset] = useState(false);
   const [alert, setAlert] = useState("");
   const [severity, setSeverity] = useState("error");
   const [alertOpen, setAlertOpen] = useState(false);
 
+  /**/
+  /*
+  NAME
+
+          handleAlertClose - a function that is called when the alert is closed. It sets the alertOpen
+          state to false.
+
+  SYNOPSIS  
+
+          handleAlertClose( event, reason )
+            event   --> The event that triggered the alert close.
+            reason  --> The reason for the alert close.
+
+  DESCRIPTION
+
+          This function is called when the alert is closed. It sets the alertOpen state to false. 
+
+  RETURNS
+
+          No return value.
+  */
+  /**/
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -57,7 +106,15 @@ const Reset = () => {
     setAlertOpen(false);
   };
 
+  /**
+   * Handles the verification of a reset code by sending a POST request to the server.
+   *
+   * @param {object} values - The values from the reset code form, containing the reset code.
+   * @param {object} onSubmitProps - The props for the form submission.
+   * @return {void}
+   */
   const verifyCode = async (values, onSubmitProps) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("code", values.code);
 
@@ -75,6 +132,7 @@ const Reset = () => {
         setAlert(errorResponse.message || "Failed to verify code.");
         setSeverity("error");
         setAlertOpen(true);
+        setLoading(false);
         return;
       }
 
@@ -88,10 +146,38 @@ const Reset = () => {
       setAlert(error.message || "An error occured.");
       setSeverity("error");
       setAlertOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
 
+  /**/
+  /*
+  NAME
+
+          changePassword - a function that is called when the form is submitted. It sends a PATCH
+          request to the server to update the user's password.
+
+  SYNOPSIS
+
+          changePassword( values, onSubmitProps )
+            values    --> The values from the form, containing the new password.
+            onSubmitProps --> The props for the form submission.
+
+  DESCRIPTION 
+
+          This function is called when the form is submitted. It sends a PATCH request to the server
+          to update the user's password. If the request is successful, the user is redirected to the
+          login page. If the request fails, an error is logged to the console.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const changePassword = async (values, onSubmitProps) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("password", values.password);
 
@@ -109,6 +195,7 @@ const Reset = () => {
         setAlert(errorResponse.message || "Failed to reset password.");
         setSeverity("error");
         setAlertOpen(true);
+        setLoading(false);
         return;
       }
 
@@ -121,8 +208,35 @@ const Reset = () => {
       setAlert(error.message || "An error occured.");
       setSeverity("error");
       setAlertOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
+
+  /**/
+  /*
+  NAME
+
+          handleFormSubmit - a function that is called when the form is submitted. It calls
+          either verifyCode or changePassword depending on the state of the form.
+
+  SYNOPSIS
+
+          handleFormSubmit( values, onSubmitProps )
+            values    --> The values from the form.
+            onSubmitProps --> The props for the form submission.
+
+  DESCRIPTION
+
+          This function is called when the form is submitted. It calls either verifyCode or
+          changePassword depending on the state of the form.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleFormSubmit = (values, onSubmitProps) => {
     if (isReset) changePassword(values, onSubmitProps);
     if (!isReset) verifyCode(values, onSubmitProps);
@@ -130,6 +244,7 @@ const Reset = () => {
 
   return (
     <Box>
+      {/* Header with the app name and a link to the home page */}
       <Box
         width="100%"
         backgroundColor={palette.background.alt}
@@ -143,6 +258,7 @@ const Reset = () => {
           </Typography>
         </Box>
       </Box>
+      {/* Form container */}
       <Box
         width={isNonMobileScreens ? "50%" : "93%"}
         p="2rem"
@@ -150,6 +266,7 @@ const Reset = () => {
         borderRadius="1.5rem"
         backgroundColor={palette.background.alt}
       >
+        {/* Success message when the code is verified */}
         <Alert
           icon={<Check fontSize="inherit" />}
           severity="success"
@@ -159,9 +276,11 @@ const Reset = () => {
             ? "Code Verified! Set your new password!"
             : "Reset Code has been sent to your email."}
         </Alert>
+        {/* Form title */}
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
           Enter your {isReset ? "New Password" : "reset code"}
         </Typography>
+        {/* Form */}
         <Formik
           onSubmit={handleFormSubmit}
           initialValues={!isReset ? initialValuesCode : initialValuesReset}
@@ -188,6 +307,7 @@ const Reset = () => {
                   },
                 }}
               >
+                {/* Reset code input when the code is not verified */}
                 {!isReset && (
                   <TextField
                     label="Reset Code"
@@ -200,9 +320,11 @@ const Reset = () => {
                     sx={{ gridColumn: "span 4" }}
                   />
                 )}
+                {/* New password input when the code is verified */}
                 {isReset && (
                   <TextField
                     label="New Password"
+                    type="password"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.password}
@@ -214,6 +336,7 @@ const Reset = () => {
                     sx={{ gridColumn: "span 4" }}
                   />
                 )}
+                {/* Submit button */}
                 <Button
                   fullWidth
                   type="submit"
@@ -225,6 +348,12 @@ const Reset = () => {
                     "&:hover": { color: palette.neutral.light },
                   }}
                 >
+                  {loading && (
+                    <CircularProgress
+                      size={24}
+                      sx={{ color: palette.background.alt }}
+                    />
+                  )}
                   {!isReset && "VERIFY CODE"}
                   {isReset && "CHANGE PASSWORD"}
                 </Button>
@@ -233,6 +362,7 @@ const Reset = () => {
           )}
         </Formik>
       </Box>
+      {/* Alert message for any errors or success messages */}
       {alert && (
         <Alerts
           message={alert}

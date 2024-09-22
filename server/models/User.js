@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// User schema for the database
 const UserSchema = new Schema(
   {
     firstName: {

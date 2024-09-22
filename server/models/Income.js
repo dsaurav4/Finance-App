@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// Income schema for the database
 const IncomeSchema = new Schema(
   {
     userId: {

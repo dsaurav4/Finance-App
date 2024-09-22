@@ -11,6 +11,29 @@ import Piechart from "../widgets/Piechart";
 import TotalTransaction from "../widgets/TotalTransaction";
 import TransactionChangeCard from "../widgets/TransactionChangeCard";
 
+/**/
+/*
+NAME
+  Expense - A functional component that displays the expense page.
+
+SYNOPSIS
+  Expense()
+
+DESCRIPTION
+  A functional component that displays the expense page. It displays the
+  following components:
+    - Navbar
+    - AddTransactionWidget
+    - Chart
+    - HighestCard
+    - TransactionTable
+    - Piechart
+    - TotalTransaction
+    - TransactionChangeCard
+
+RETURNS
+  The Expense component.
+*/
 const Expense = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const userId = useSelector((state) => state.user._id);
@@ -149,6 +172,24 @@ const Expense = () => {
 
 export default Expense;
 
+/**/
+/*
+NAME
+    getExpenses - A function that fetches expenses from the server.
+
+SYNOPSIS
+    getExpenses( userId, token, dispatch, setExpenses );
+        userId     --> the ID of the user whose expenses are to be fetched.
+        token      --> the authentication token for the API request.
+        dispatch   --> the Redux dispatch function for updating the state.
+        setExpenses --> action creator function for setting the expenses in the state.  
+
+DESCRIPTION
+    This function makes an asynchronous GET request to retrieve the user's expenses
+
+RETURNS
+    No return value.
+*/
 export const getExpenses = async (userId, token, dispatch, setExpenses) => {
   const response = await fetch(
     `http://localhost:3001/transactions/${userId}/expense`,
@@ -162,6 +203,27 @@ export const getExpenses = async (userId, token, dispatch, setExpenses) => {
   dispatch(setExpenses({ expenses: data }));
 };
 
+/**/
+/*
+NAME
+
+        findHighestExpense - Finds the highest expense for the current month.
+
+SYNOPSIS
+
+        findHighestExpense(expenses)
+          expenses --> An array of expense objects.
+
+DESCRIPTION
+
+        Finds the highest expense for the current month.
+
+RETURNS
+
+        An object containing the highest expense and its total amount for the current month.
+
+*/
+/**/
 const findHighestExpense = (expenses) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
@@ -189,6 +251,27 @@ const findHighestExpense = (expenses) => {
   return highestExpense;
 };
 
+/**/
+/*
+NAME
+
+        findHighestExpenseCategory - Finds the highest expense category for the current month.
+
+SYNOPSIS
+
+        findHighestExpenseCategory(expenses)
+          expenses   --> An array of expense objects.
+
+DESCRIPTION 
+
+        Finds the highest expense category for the current month.
+
+RETURNS 
+
+        An object containing the highest expense category and its total amount for the current month.
+
+*/
+/**/
 const findHighestExpenseCategory = (expenses) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
@@ -225,5 +308,5 @@ const findHighestExpenseCategory = (expenses) => {
     }
   }
 
-  return { category: highestCategory, amount: highestAmount };
+  return { category: highestCategory, amount: highestAmount.toFixed(2) };
 };

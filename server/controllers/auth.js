@@ -13,7 +13,31 @@ import path from "path";
 import { fileURLToPath } from "url";
 dotenv.config();
 
-/* REGISTER */
+/* RESGISTER */
+/**/
+/*
+NAME
+
+        register - A function that registers a new user.
+
+SYNOPSIS
+
+        register(req, res)
+            req --> The request object containing the user's details.
+            res --> The response object.
+
+DESCRIPTION
+
+        The register function registers a new user by checking if the username or email already exists in the database.
+        The function then hashes the password and saves the user details in the database. 
+        If the user is successfully registered, a verification link is generated and sent to the user's email.
+
+RETURNS
+
+        The function returns a JSON response with a message indicating the status of the registration process.
+
+*/
+/**/
 export const register = async (req, res) => {
   try {
     const { firstName, lastName, username, email, password } = req.body;
@@ -28,13 +52,13 @@ export const register = async (req, res) => {
         .json({ message: "Username or email already exists" });
     }
 
-    const isEmailExist = await validate(email);
+    // const isEmailExist = await validate(email);
 
-    if (!isEmailExist.valid) {
-      return res
-        .status(409)
-        .json({ message: "Email is not valid! Please enter a valid email." });
-    }
+    // if (!isEmailExist.valid) {
+    //   return res
+    //     .status(409)
+    //     .json({ message: "Email is not valid! Please enter a valid email." });
+    // }
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
@@ -118,7 +142,31 @@ export const register = async (req, res) => {
   }
 };
 
-/* LOGGING IN */
+/* LOGIN */
+/**/
+/*
+
+NAME
+
+        login - A function that logs in a user.
+
+SYNOPSIS
+
+        login(req, res)
+            req --> The request object containing the user's username and password.
+            res --> The response object.
+
+DESCRIPTION
+
+        The login function logs in a user by checking if the user exists in the database and verifying the password.
+        If the user is not verified, the function sends a verification link to the user's email.
+
+RETURNS
+
+        The function returns a JSON response with a token and the user's details if the login is successful.
+
+*/
+/**/
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -190,6 +238,29 @@ export const login = async (req, res) => {
 };
 
 /* VERIFY USER */
+/**/
+/*
+
+NAME
+
+        verifyCode - A function that verifies a user's email.
+
+SYNOPSIS
+
+        verifyCode(req, res)
+            req --> The request object containing the user's ID and verification code.
+            res --> The response object.
+
+DESCRIPTION
+
+        The verifyCode function verifies a user's email by checking if the verification code is valid.
+
+RETURNS
+
+        The function returns a JSON response with a message indicating the status of the verification process.
+
+*/
+/**/
 export const verifyCode = async (req, res) => {
   try {
     const { userId, code } = req.params;
@@ -226,6 +297,29 @@ export const verifyCode = async (req, res) => {
 };
 
 /* RESET PASSWORD */
+/**/
+/*
+
+NAME
+
+        resetPassword - A function that resets a user's password.
+
+SYNOPSIS
+
+        resetPassword(req, res)
+            req --> The request object containing the user's email.
+            res --> The response object.
+
+DESCRIPTION
+
+        The resetPassword function resets a user's password by generating a new reset code and sending it to the user's email.
+
+RETURNS
+
+        The function returns a JSON response with the user's ID if the reset code is successfully generated.
+
+*/
+/**/
 export const resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -270,6 +364,29 @@ export const resetPassword = async (req, res) => {
 };
 
 /* VERIFY RESET CODE */
+/**/
+/*
+
+NAME
+
+        verifyResetCode - A function that verifies a user's reset code.
+
+SYNOPSIS
+
+        verifyResetCode(req, res)
+            req --> The request object containing the user's ID and reset code.
+            res --> The response object.
+
+DESCRIPTION
+
+        The verifyResetCode function verifies a user's reset code by checking if the reset code is valid.
+
+RETURNS
+
+        The function returns a JSON response with a message indicating the status of the reset code verification process.
+
+*/
+/**/
 export const verifyResetCode = async (req, res) => {
   try {
     const { code } = req.body;
@@ -301,6 +418,29 @@ export const verifyResetCode = async (req, res) => {
 };
 
 /* UPDATE PASSWORD */
+/**/
+/*
+
+NAME
+
+        updatePassword - A function that updates a user's password.
+
+SYNOPSIS
+
+        updatePassword(req, res)
+            req --> The request object containing the user's ID and new password.
+            res --> The response object.
+
+DESCRIPTION
+
+        The updatePassword function updates a user's password by hashing the new password and saving it in the database.
+
+RETURNS
+
+        The function returns a JSON response with a message indicating the status of the password update process.
+
+*/
+/**/
 export const updatePassword = async (req, res) => {
   try {
     const { userId } = req.params;

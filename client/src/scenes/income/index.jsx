@@ -11,6 +11,22 @@ import Piechart from "../widgets/Piechart";
 import TotalTransaction from "../widgets/TotalTransaction";
 import TransactionChangeCard from "../widgets/TransactionChangeCard";
 
+/**/
+/*
+NAME
+        Income - The Income page component .
+
+SYNOPSIS
+
+        Income()
+
+DESCRIPTION
+        The Income page component. This component displays the income page.
+
+RETURNS
+        The Income page component.
+*/
+/**/
 const Income = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const userId = useSelector((state) => state.user._id);
@@ -101,7 +117,11 @@ const Income = () => {
         >
           <HighestCard
             headerMessage="Highest Income This Month"
-            amount={incomes.length > 0 ? findHighestIncome(incomes).amount : 0}
+            amount={
+              incomes.length > 0
+                ? findHighestIncome(incomes).amount.toFixed(2)
+                : 0
+            }
             type="income"
             description={
               incomes.length > 0
@@ -144,6 +164,31 @@ const Income = () => {
 
 export default Income;
 
+/**/
+/*
+NAME
+        getIncomes - Fetches the income data for a user from the server.
+
+SYNOPSIS
+
+        getIncomes( userId, token, dispatch, setIncomes );
+          userId --> The ID of the user whose income data is to be fetched.
+          token  --> The authentication token for the user.
+          dispatch --> The Redux dispatch function.
+          setIncomes --> The function to set the income data in the Redux store.
+
+DESCRIPTION
+
+        Fetches the income data for a user from the server. It handles the
+        response and updates the state accordingly. If an error occurs, it
+        displays an error message.
+
+RETURNS
+        None
+
+*/
+/**/
+
 export const getIncomes = async (userId, token, dispatch, setIncomes) => {
   const response = await fetch(
     `http://localhost:3001/transactions/${userId}/income`,
@@ -161,6 +206,28 @@ export const getIncomes = async (userId, token, dispatch, setIncomes) => {
   }
 };
 
+/**/
+/*
+NAME
+
+        findHighestIncome - Finds the highest income for the current month.
+
+
+SYNOPSIS
+
+        findHighestIncome( incomes );
+          incomes --> An array of income objects with date, amount, and category properties.
+
+DESCRIPTION
+
+        Finds the highest income for the current month from a list of incomes.
+
+RETURNS
+
+        An object containing the highest income amount and description.
+
+*/
+/**/
 const findHighestIncome = (incomes) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
@@ -189,6 +256,28 @@ const findHighestIncome = (incomes) => {
   return highestIncome;
 };
 
+/**/
+/*
+NAME
+
+        findHighestIncomeCategory - Finds the highest income category for the current month.
+
+
+SYNOPSIS
+
+        findHighestIncomeCategory( incomes );
+          incomes --> An array of income objects with date, amount, and category properties.
+
+DESCRIPTION
+
+        Finds the highest income category for the current month from a list of incomes.
+
+RETURNS
+
+        An object containing the highest income amount and description.
+
+*/
+/**/
 const findHighestIncomeCategory = (incomes) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
@@ -224,5 +313,5 @@ const findHighestIncomeCategory = (incomes) => {
     }
   }
 
-  return { category: highestCategory, amount: highestAmount };
+  return { category: highestCategory, amount: highestAmount.toFixed(2) };
 };

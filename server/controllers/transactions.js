@@ -3,6 +3,29 @@ import Expense from "../models/Expense.js";
 import User from "../models/User.js";
 
 /* READ */
+/**/
+/*
+
+NAME
+
+        getIncome - Retrieves a list of incomes for a specific user.
+
+SYNOPSIS
+
+        getIncome(req, res)
+              req --> The request object containing the user's ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The getIncome function retrieves a list of incomes for a specific user by querying the database for incomes that match the user's ID.
+
+RETURNS
+
+        Returns a JSON response containing the list of incomes for the user.
+
+*/
+/**/
 export const getIncome = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -15,6 +38,29 @@ export const getIncome = async (req, res) => {
   }
 };
 
+/**/
+/*
+
+NAME
+
+        getExpense - Retrieves a list of expenses for a specific user.
+
+SYNOPSIS
+
+        getExpense(req, res)
+              req --> The request object containing the user's ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The getExpense function retrieves a list of expenses for a specific user by querying the database for expenses that match the user's ID.
+
+RETURNS
+
+        Returns a JSON response containing the list of expenses for the user.
+
+*/
+/**/
 export const getExpense = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -27,6 +73,29 @@ export const getExpense = async (req, res) => {
 };
 
 /* UPDATE */
+/**/
+/*
+
+NAME
+
+        editIncome - Updates an existing income entry by ID.
+
+SYNOPSIS
+
+        editIncome(req, res)
+              req --> The request object containing the income ID and updated details.
+              res --> The response object.
+
+DESCRIPTION
+
+        The editIncome function updates an existing income entry by ID.
+
+RETURNS
+
+        Returns a JSON response containing the updated income entry.
+
+*/
+/**/
 export const postIncome = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -59,6 +128,13 @@ export const postIncome = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new expense entry for a specific user.
+ *
+ * @param {Object} req - The request object containing the user's ID and expense details.
+ * @param {Object} res - The response object.
+ * @return {Object} A JSON response containing the updated list of expenses for the user.
+ */
 export const postExpense = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -89,6 +165,29 @@ export const postExpense = async (req, res) => {
 };
 
 /* PATCH */
+/**/
+/*
+
+NAME
+
+        editIncome - Updates an existing income entry by ID.
+
+SYNOPSIS
+
+        editIncome(req, res)
+              req --> The request object containing the income ID and updated details.
+              res --> The response object.
+
+DESCRIPTION
+
+        The editIncome function updates an existing income entry by ID.
+
+RETURNS
+
+        Returns a JSON response containing the updated income entry.
+
+*/
+/**/
 export const editIncome = async (req, res) => {
   try {
     const { id } = req.params;
@@ -110,6 +209,29 @@ export const editIncome = async (req, res) => {
   }
 };
 
+/**/
+/*
+
+NAME
+
+        editExpense - Updates an existing expense entry by ID.
+
+SYNOPSIS
+
+        editExpense(req, res)
+              req --> The request object containing the expense ID and updated details.
+              res --> The response object.
+
+DESCRIPTION
+
+        The editExpense function updates an existing expense entry by ID.
+
+RETURNS
+
+        Returns a JSON response containing the updated expense entry.
+
+*/
+/**/
 export const editExpense = async (req, res) => {
   try {
     const { id } = req.params;
@@ -132,6 +254,29 @@ export const editExpense = async (req, res) => {
 };
 
 /* DELETE */
+/**/
+/*
+
+NAME
+
+        deleteIncome - Deletes an income entry by ID and updates the user's income list.
+
+SYNOPSIS
+
+        deleteIncome(req, res)
+              req --> The request object containing the user's ID and income ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The deleteIncome function deletes an income entry by ID and updates the user's income list.
+
+RETURNS
+
+        Returns a JSON response containing the updated list of incomes for the user.
+
+*/
+/**/
 export const deleteIncome = async (req, res) => {
   try {
     const { userId, id } = req.params;
@@ -154,6 +299,29 @@ export const deleteIncome = async (req, res) => {
   }
 };
 
+/**/
+/*
+
+NAME
+
+        deleteExpense - Deletes an expense entry by ID and updates the user's expense list.
+
+SYNOPSIS
+
+        deleteExpense(req, res)
+              req --> The request object containing the user's ID and expense ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The deleteExpense function deletes an expense entry by ID and updates the user's expense list.
+
+RETURNS
+
+        Returns a JSON response containing the updated list of expenses for the user.
+
+*/
+/**/
 export const deleteExpense = async (req, res) => {
   try {
     const { userId, id } = req.params;

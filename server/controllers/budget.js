@@ -2,6 +2,29 @@ import Budget from "../models/Budget.js";
 import User from "../models/User.js";
 
 /* READ */
+/**/
+/*
+
+NAME
+
+        getBudgets - Retrieves the budgets for a specific user.
+
+SYNOPSIS
+
+        getBudgets(req, res)
+              req --> The request object containing the user's ID.
+              res --> The response object.  
+
+DESCRIPTION
+
+        The getBudgets function retrieves the budgets for a specific user by querying the database for budgets that match the user's ID.
+
+RETURNS
+
+        Returns a JSON response containing the list of budgets for the user.
+
+*/
+/**/
 export const getBudgets = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -14,6 +37,28 @@ export const getBudgets = async (req, res) => {
 };
 
 /* CREATE */
+/**/
+/*
+
+NAME
+
+        postBudget - Creates a new budget for a specific user.
+
+SYNOPSIS
+
+        postBudget(req, res)
+              req --> The request object containing the user's ID and the budget data.
+              res --> The response object.
+
+DESCRIPTION
+
+        The postBudget function creates a new budget for a specific user by checking if the user exists, validating the budget data, and saving the budget to the database.
+
+RETURNS
+
+        Returns a JSON response containing the updated list of budgets for the user.
+
+*/
 export const postBudget = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -64,6 +109,29 @@ export const postBudget = async (req, res) => {
 };
 
 /* DELETE */
+/**/
+/*
+
+NAME
+
+        deleteBudget - Deletes a budget for a specific user.
+
+SYNOPSIS
+
+        deleteBudget(req, res)
+              req --> The request object containing the user's ID and the budget ID.
+              res --> The response object.
+
+DESCRIPTION
+
+        The deleteBudget function deletes a budget for a specific user by checking if the budget exists, deleting the budget from the database, and updating the user's list of budgets.
+
+RETURNS
+  
+          Returns a JSON response containing the updated list of budgets for the user.
+  
+  */
+/**/
 export const deleteBudget = async (req, res) => {
   try {
     const { userId, id } = req.params;

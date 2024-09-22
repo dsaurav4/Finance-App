@@ -31,6 +31,29 @@ import { setMode, setLogout } from "../../state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../../components/FlexBetween";
 
+/**/
+/*
+NAME
+
+        Navbar - A reusable Navbar component. This component is used across the application.
+
+SYNOPSIS
+
+        Navbar()
+
+DESCRIPTION
+
+        This component is used to display the Navbar at the top of the application. It includes
+        various components such as the Dashboard, Income, Expense, Budget, Saving Goal, and
+        Logout. The component also includes a dropdown menu for user profile. The component is
+        responsive and can be used on any screen size.
+
+RETURNS
+
+        The Navbar component.
+
+*/
+/**/
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
@@ -45,6 +68,7 @@ const Navbar = () => {
 
   const fullName = user ? `${user.firstName} ${user.lastName}` : "Saurav Dahal";
 
+  // Dropdown menu for user profile
   const dropdown = (
     <FlexBetween gap="0.5rem">
       <FormControl variant="standard" value={fullName}>
@@ -83,6 +107,7 @@ const Navbar = () => {
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+      {/* NAVIGATION MENU */}
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"

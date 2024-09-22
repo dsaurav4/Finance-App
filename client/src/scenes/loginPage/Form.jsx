@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -17,6 +18,7 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "../../components/FlexBetween";
 import Alerts from "../../components/Alerts";
 
+// schema for register form
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
@@ -27,19 +29,22 @@ const registerSchema = yup.object().shape({
     .min(8, "Password must be at least 8 characters long")
     .matches(/[A-Z]/, "Password must contain at least 1 uppercase letter")
     .matches(/\d/, "Password must contain at least 1 digit")
-    .required("New password is required"),
+    .required("Password is required"),
   picture: yup.mixed().required("Picture is required"),
 });
 
+// schema for login form
 const loginSchema = yup.object().shape({
   username: yup.string().required("required"),
   password: yup.string().required("required"),
 });
 
+// schema for forgot password form
 const forgotPasswordSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
 });
 
+// initial values for register form
 const initialValuesRegister = {
   firstName: "",
   lastName: "",
@@ -49,16 +54,38 @@ const initialValuesRegister = {
   picture: "",
 };
 
+// initial values for login form
 const initialValuesLogin = {
   username: "",
   password: "",
 };
 
+// initial values for forgot password form
 const initialValuesForgotPassword = {
   email: "",
 };
 
+/**/
+/*
+NAME
+    Form - A reusable form component.
+
+SYNOPSIS
+    Form({ pageType, setPageType })
+        pageType      --> string indicating the type of form. This can be "login", "register", or "forgotPassword".
+        setPageType   --> function to set the type of form. This is used to switch between login, register, and forgot password forms.
+
+
+DESCRIPTION
+    A reusable form component. This component is used to display a login, register,
+    forgot password, or reset password form.
+
+RETURNS
+    The form component.
+*/
+/**/
 const Form = ({ pageType, setPageType }) => {
+  const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertSeverity, setAlertSeverity] = useState("error");
@@ -70,7 +97,26 @@ const Form = ({ pageType, setPageType }) => {
   const isRegister = pageType === "register";
   const isForgotPassword = pageType == "forgotPassword";
 
+  /**/
+  /*
+  NAME
+      register - Handles the registration of a new user by sending a POST request to the server with the provided form data.  
+
+  SYNOPSIS
+      register(values, onSubmitProps)
+          values        --> The values from the register form.
+          onSubmitProps --> The onSubmitProps from the register form.
+
+  DESCRIPTION
+      Handles the registration of a new user by sending a POST request to the server with the provided form data.  
+
+  RETURNS
+      No return value.
+  */
+  /**/
+
   const register = async (values, onSubmitProps) => {
+    setLoading(true);
     const formData = new FormData();
     for (let value in values) {
       formData.append(value, values[value]);
@@ -90,6 +136,7 @@ const Form = ({ pageType, setPageType }) => {
         setAlert(data.message);
         setAlertSeverity("error");
         setAlertOpen(true);
+        setLoading(false);
         return;
       }
 
@@ -106,10 +153,30 @@ const Form = ({ pageType, setPageType }) => {
       console.error(err);
       setAlert("An error occurred during registration. Please try again.");
       setAlertSeverity("error");
+    } finally {
+      setLoading(false);
     }
   };
 
+  /**/
+  /*
+  NAME
+      login - Handles the login of an existing user by sending a POST request to the server with the provided form data.
+
+  SYNOPSIS
+      login(values, onSubmitProps)
+          values        --> The values from the login form.
+          onSubmitProps --> The onSubmitProps from the login form.
+
+  DESCRIPTION
+      Handles the login of an existing user by sending a POST request to the server with the provided form data.
+
+  RETURNS
+      No return value.
+  */
+  /**/
   const login = async (values, onSubmitProps) => {
+    setLoading(true);
     try {
       const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
@@ -123,6 +190,7 @@ const Form = ({ pageType, setPageType }) => {
         setAlertSeverity("error");
         setAlertOpen(true);
         onSubmitProps.resetForm();
+        setLoading(false);
         return;
       }
 
@@ -142,10 +210,30 @@ const Form = ({ pageType, setPageType }) => {
     } catch (err) {
       console.error(err);
       setAlert("An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  /**/
+  /*
+  NAME
+      resetPassword - Handles the reset of the password of an existing user by sending a POST request to the server with the provided form data.  
+
+  SYNOPSIS
+      resetPassword(values, onSubmitProps)
+          values        --> The values from the reset password form.
+          onSubmitProps --> The onSubmitProps from the reset password form.
+
+  DESCRIPTION
+      Handles the reset of the password of an existing user by sending a POST request to the server with the provided form data.
+
+  RETURNS
+      No return value.
+  */
+  /**/
   const resetPassword = async (values, onSubmitProps) => {
+    setLoading(true);
     const formData = new FormData();
 
     formData.append("email", values.email);
@@ -165,6 +253,7 @@ const Form = ({ pageType, setPageType }) => {
         setAlertSeverity("error");
         setAlertOpen(true);
         onSubmitProps.resetForm();
+        setLoading(false);
         return;
       }
 
@@ -177,15 +266,51 @@ const Form = ({ pageType, setPageType }) => {
       setAlertOpen(true);
       onSubmitProps.resetForm();
       return;
+    } finally {
+      setLoading(false);
     }
   };
 
+  /**/
+  /*
+  NAME
+      handleFormSubmit - Handles the submission of the form by either logging in or registering a new user.
+
+  SYNOPSIS  
+      handleFormSubmit(values, onSubmitProps)
+          values        --> The values from the form.
+          onSubmitProps --> The onSubmitProps from the form.
+
+  DESCRIPTION
+      Handles the submission of the form by either logging in or registering a new user.
+
+  RETURNS
+      No return value.
+  */
+  /**/
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
     if (isForgotPassword) await resetPassword(values, onSubmitProps);
   };
 
+  /**/
+  /*
+  NAME
+      handleAlertClose - Handles the closing of an alert by checking the reason for the close event.
+
+  SYNOPSIS
+      handleAlertClose(event, reason)
+          event --> The event that triggered the close.
+          reason --> The reason for the close.
+
+  DESCRIPTION
+      Handles the closing of an alert by checking the reason for the close event.
+
+  RETURNS
+      No return value.
+  */
+  /**/
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -226,6 +351,7 @@ const Form = ({ pageType, setPageType }) => {
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
           >
+            {/* REGISTER FIELDS */}
             {isRegister && (
               <>
                 <TextField
@@ -291,6 +417,7 @@ const Form = ({ pageType, setPageType }) => {
                 </Box>
               </>
             )}
+            {/* EMAIL */}
             {(isForgotPassword || isRegister) && (
               <TextField
                 label="Email"
@@ -303,7 +430,7 @@ const Form = ({ pageType, setPageType }) => {
                 sx={{ gridColumn: "span 4" }}
               />
             )}
-
+            {/* USERNAME AND PASSWORD */}
             {(isLogin || isRegister) && (
               <>
                 <TextField
@@ -344,9 +471,18 @@ const Form = ({ pageType, setPageType }) => {
                 "&:hover": { color: palette.neutral.light },
               }}
             >
-              {isLogin && "LOGIN"}
-              {isRegister && "REGISTER"}
-              {isForgotPassword && "Send Code"}
+              {loading ? (
+                <CircularProgress
+                  size={24}
+                  sx={{ color: palette.background.alt }}
+                />
+              ) : isLogin ? (
+                "LOGIN"
+              ) : isRegister ? (
+                "REGISTER"
+              ) : (
+                "Send Code"
+              )}
             </Button>
             <FlexBetween>
               {(isLogin || isRegister) && (

@@ -22,6 +22,8 @@ import Alerts from "../../components/Alerts.jsx";
 import { Formik } from "formik";
 import * as yup from "yup";
 
+// validation schema for updating a saving goal
+// - addedMoney: a number greater than 0
 const updateSavingSchema = yup.object().shape({
   addedMoney: yup
     .number()
@@ -30,22 +32,86 @@ const updateSavingSchema = yup.object().shape({
     .min(1, "Amount cannot be negative or zero"),
 });
 
+// initial values for the update saving goal form
+// - addedMoney: empty string
 const initialUpdateSavingSchema = {
   addedMoney: "",
 };
 
+/**/
+/*
+NAME
+
+        SavingGoalProgress - A react functional component that displays the progress of a saving goal.
+
+SYNOPSIS
+
+        SavingGoalProgress({ goal, active, expired, upcoming })
+                goal --> The saving goal object.
+                active --> A flag to determine if the saving goal is active.
+                expired --> A flag to determine if the saving goal is expired.
+                upcoming --> A flag to determine if the saving goal is upcoming.
+
+DESCRIPTION
+
+        The SavingGoalProgress component displays the progress of a saving goal.
+        The component takes in the saving goal object and flags to determine if the saving goal is active, expired, or upcoming.
+        The component displays the saving goal name, start date, end date, target amount, and current amount.
+        It also displays a gauge chart showing the progress of the saving goal.
+        If the saving goal is active, the component allows the user to add money to the saving goal.
+        If the saving goal is expired, the component displays the amount failed to save in red.
+        If the saving goal is upcoming, the component displays the target amount.
+        The component also allows the user to delete the saving goal.
+
+RETURNS
+
+        Returns the JSX elements to display the progress of a saving goal.
+
+*/
+/**/
 const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
+  // Determine whether the screen size is larger than 1000px
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  // Get the dispatch function from the Redux store
   const dispatch = useDispatch();
+  // Get the theme palette
   const { palette } = useTheme();
 
+  // a flag to determine whether the delete dialog box is open
   const [openDelete, setOpenDelete] = useState(false);
+  // the user ID from the Redux store
   const userId = useSelector((state) => state.user._id);
+  // the authentication token from the Redux store
   const token = useSelector((state) => state.token);
 
+  // the alert message to be displayed
   const [alert, setAlert] = useState("");
+  // the severity of the alert (error, warning, info, success)
   const [severity, setSeverity] = useState("error");
+  // a flag to determine whether the alert is open
   const [alertOpen, setAlertOpen] = useState(false);
+
+  /**/
+  /*
+  NAME
+
+          handleAlertClose - A function that handles the closing of the alert message.
+
+  SYNOPSIS
+
+          handleAlertClose(event, reason)
+                  event --> The event object.
+                  reason --> The reason for closing the alert message.
+
+  DESCRIPTION
+
+          The handleAlertClose function handles the closing of the alert message.
+
+  RETURNS
+
+          No return value.
+  */
+  /**/
   const handleAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -53,19 +119,83 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
     setAlertOpen(false);
   };
 
+  /**/
+  /*
+  NAME
+
+          handleClickOpenDelete - A function that opens the delete dialog box.
+
+  SYNOPSIS
+
+          handleClickOpenDelete()
+
+  DESCRIPTION
+
+          The handleClickOpenDelete function opens the delete dialog box.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleClickOpenDelete = () => {
     setOpenDelete(true);
   };
 
+  /**/
+  /*
+  NAME
+
+          handleCloseDelete - A function that closes the delete dialog box.
+
+  SYNOPSIS
+
+          handleCloseDelete()
+
+  DESCRIPTION
+
+          The handleCloseDelete function closes the delete dialog box. 
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
 
+  /**/
+  /*
+  NAME
+
+          handleFormSubmit - A function that handles the submission of the update saving goal form.
+
+  SYNOPSIS
+
+          handleFormSubmit(values, onSubmitProps)
+                  values --> The values from the update saving goal form.
+                  onSubmitProps --> The formik form submission props.
+
+  DESCRIPTION
+
+          The handleFormSubmit function handles the submission of the update saving goal form.
+
+  RETURNS
+
+          No return value.
+
+  */
+  /**/
   const handleFormSubmit = async (values, onSubmitProps) => {
     try {
+      // create a new FormData object and append the added money value
       const formData = new FormData();
       formData.append("addedMoney", values.addedMoney);
 
+      // send a PATCH request to the server to update the saving goal
       const response = await fetch(
         `http://localhost:3001/savingGoals/${userId}/${goal._id}`,
         {
@@ -75,6 +205,7 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
         }
       );
 
+      // if the response is not OK, display an error message
       if (!response.ok) {
         const errorResponse = await response.json();
         setAlert(errorResponse.message || "Failed to save budget.");
@@ -83,6 +214,7 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
         return;
       }
 
+      // if the response is OK, update the saving goal in the state and display a success message
       const savingGoal = await response.json();
       dispatch(setSavingGoal({ savingGoal }));
       onSubmitProps.resetForm();
@@ -90,14 +222,37 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
       setSeverity("success");
       setAlertOpen(true);
     } catch (error) {
+      // if an error occurs, display an error message
       setAlert("An error occurred. Please try again.");
       setSeverity("error");
       setAlertOpen(true);
     }
   };
 
+  /**/
+  /*
+
+  NAME
+
+          handleDelete - A function that handles the deletion of a saving goal.
+
+  SYNOPSIS
+
+          handleDelete()
+
+  DESCRIPTION
+
+          The handleDelete function handles the deletion of a saving goal. 
+          It sends a DELETE request to the server to delete the saving goal.
+
+  RETURNS
+
+          No return value.
+
+  */
   const handleDelete = async () => {
     try {
+      // send a DELETE request to the server to delete the saving goal
       const response = await fetch(
         `http://localhost:3001/savingGoals/${userId}/${goal._id}`,
         {
@@ -106,17 +261,23 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
         }
       );
 
+      // get the response data
       const data = await response.json();
 
+      // update the state with the new list of saving goals
       dispatch(setSavingGoals({ savingGoals: data }));
+      // display a success message
       setAlert("Saving Goal deleted successfully.");
       setSeverity("success");
       setAlertOpen(true);
+      // close the delete dialog box
       handleCloseDelete();
     } catch (error) {
+      // if an error occurs, display an error message
       setAlert(error.message);
       setSeverity("error");
       setAlertOpen(true);
+      // close the delete dialog box
       handleCloseDelete();
     }
   };

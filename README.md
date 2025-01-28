@@ -130,3 +130,31 @@ The Finance App is a personal finance management tool designed to simplify budge
 
 ---
 
+## Screenshots
+
+![Screenshot 1](screenshots/1.png)
+![Screenshot 2](screenshots/2.png)
+![Screenshot 3](screenshots/3.png)
+![Screenshot 4](screenshots/4.png)
+![Screenshot 5](screenshots/5.png)
+![Screenshot 6](screenshots/6.png)
+![Screenshot 7](screenshots/7.png)
+![Screenshot 8](screenshots/8.png)
+![Screenshot 9](screenshots/9.png)
+![Screenshot 10](screenshots/10.png)
+![Screenshot 11](screenshots/11.png)
+![Screenshot 12](screenshots/12.png)
+![Screenshot 13](screenshots/13.png)
+![Screenshot 14](screenshots/14.png)
+![Screenshot 15](screenshots/15.png)
+![Screenshot 16](screenshots/16.png)
+![Screenshot 17](screenshots/17.png)
+![Screenshot 18](screenshots/18.png)
+![Screenshot 19](screenshots/19.png)
+![Screenshot 20](screenshots/20.png)
+![Screenshot 21](screenshots/21.png)
+![Screenshot 22](screenshots/22.png)
+![Screenshot 23](screenshots/23.png)
+![Screenshot 24](screenshots/24.png)
+
+---

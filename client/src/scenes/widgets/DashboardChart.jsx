@@ -46,10 +46,6 @@ const DashboardChart = ({ period, setPeriod }) => {
   const incomes = useSelector((state) => state.incomes);
   const expenses = useSelector((state) => state.expenses);
 
-  if (!incomes || !expenses) {
-    return <Typography>Loading chart...</Typography>;
-  }
-
   // the current theme
   const { palette } = useTheme();
 
@@ -353,6 +349,7 @@ const aggregateTransactionsByPeriod = (incomes, expenses, period) => {
   // find the corresponding entry in the initialData array
   // and add the income amount to the income property.
   incomes.forEach((income) => {
+    if (!income.date) return;
     const incomeDate = format(parseISO(income.date), formatPattern);
     const entry = initialData.find((entry) => entry.date === incomeDate);
     if (entry) {
@@ -364,6 +361,7 @@ const aggregateTransactionsByPeriod = (incomes, expenses, period) => {
   // find the corresponding entry in the initialData array
   // and add the expense amount to the expense property.
   expenses.forEach((expense) => {
+    if (!expense.date) return;
     const expenseDate = format(parseISO(expense.date), formatPattern);
     const entry = initialData.find((entry) => entry.date === expenseDate);
     if (entry) {
@@ -376,9 +374,7 @@ const aggregateTransactionsByPeriod = (incomes, expenses, period) => {
   // with the period property formatted according to the period.
   const result = initialData.map((entry) => ({
     // The period is formatted according to the period.
-    period: format(new Date(entry.date), formatPattern, {
-      timeZone: "UTC",
-    }),
+    period: entry.date,
     // The income and expense amounts are copied from the entry.
     income: entry.income,
     expense: entry.expense,

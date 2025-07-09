@@ -65,8 +65,9 @@ export const register = async (req, res) => {
 
     let picturePath;
     if (req.file) {
-      const localFilePath = req.file.path;
-      const cloudinaryResponse = await uploadOnCloudinary(localFilePath);
+      // Pass the file buffer directly to upload function
+      const cloudinaryResponse = await uploadOnCloudinary(req.file.buffer);
+
       if (!cloudinaryResponse) {
         return res.status(500).json({ message: "File upload failed" });
       }

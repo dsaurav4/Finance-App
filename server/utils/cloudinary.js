@@ -15,36 +15,41 @@ cloudinary.config({
 
 NAME
 
-        uploadOnCloudinary - Uploads a file to Cloudinary.
+        uploadOnCloudinary - Uploads a file from a buffer to Cloudinary.
 
 SYNOPSIS
 
-        uploadOnCloudinary(loaclFilePath)
-              loaclFilePath --> The path of the file to be uploaded.
+        uploadOnCloudinary(fileBuffer)
+              fileBuffer --> The file data as a buffer in memory.
 
 DESCRIPTION
 
-        The uploadOnCloudinary function uploads a file to Cloudinary by using the Cloudinary SDK to upload the file to the Cloudinary server.
+        The uploadOnCloudinary function uploads a file to Cloudinary by streaming a buffer. This is suitable for serverless or ephemeral file system environments.
 
 RETURNS
 
-        Returns the response from Cloudinary if the file is uploaded successfully, otherwise returns null.
+        Returns the response from Cloudinary if the file is uploaded successfully, otherwise returns a rejected promise.
 
 */
 /**/
-const uploadOnCloudinary = async (loaclFilePath) => {
-  try {
-    if (!loaclFilePath) return null;
-    const response = await cloudinary.uploader.upload(loaclFilePath, {
-      resource_type: "image",
-    });
-    console.log("File Uploaded Successfully", response.url);
-    return response;
-  } catch (error) {
-    fs.unlinkSync(loaclFilePath);
-    console.log(error);
-    return null;
-  }
+const uploadOnCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    // Use upload_stream to handle the buffer
+    const cloudStream = cloudinary.uploader.upload_stream(
+      { resource_type: "auto" },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary Upload Error:", error);
+          return reject(error);
+        }
+        console.log("File Uploaded Successfully", result.url);
+        resolve(result);
+      }
+    );
+
+    // Create a readable stream from the buffer and pipe it to Cloudinary
+    streamifier.createReadStream(fileBuffer).pipe(cloudStream);
+  });
 };
 
 export default uploadOnCloudinary;

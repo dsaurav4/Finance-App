@@ -174,13 +174,16 @@ const AddSavingGoal = () => {
 
     try {
       // Send a POST request to the server to save the new saving goal
-      const response = await fetch(`http://localhost:3001/savingGoals/${_id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `https://finance-app-oi2l.onrender.com/savingGoals/${_id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         // If the response is not OK, display an error message

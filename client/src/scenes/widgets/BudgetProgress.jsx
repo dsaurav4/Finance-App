@@ -223,7 +223,7 @@ const BudgetProgress = ({ budget, showChart, active, expired }) => {
       // It handles the response and updates the state accordingly.
       // If an error occurs, it displays an error message.
       const response = await fetch(
-        `http://localhost:3001/budgets/${userId}/${budget._id}`,
+        `https://finance-app-oi2l.onrender.com/budgets/${userId}/${budget._id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

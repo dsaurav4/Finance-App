@@ -192,7 +192,7 @@ RETURNS
 */
 export const getExpenses = async (userId, token, dispatch, setExpenses) => {
   const response = await fetch(
-    `http://localhost:3001/transactions/${userId}/expense`,
+    `https://finance-app-oi2l.onrender.com/transactions/${userId}/expense`,
     {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },

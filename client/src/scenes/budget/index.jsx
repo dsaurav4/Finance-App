@@ -382,7 +382,7 @@ RETURNS
 export const getBudgets = async (userId, token, dispatch, setBudgets) => {
   try {
     const response = await fetch(
-      `http://localhost:3001/budgets/${userId}/budgets`,
+      `https://finance-app-oi2l.onrender.com/budgets/${userId}/budgets`,
       {
         method: "GET",
         headers: {

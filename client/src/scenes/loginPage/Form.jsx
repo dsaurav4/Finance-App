@@ -124,7 +124,7 @@ const Form = ({ pageType, setPageType }) => {
 
     try {
       const savedUserResponse = await fetch(
-        "http://localhost:3001/auth/register",
+        "https://finance-app-oi2l.onrender.com/auth/register",
         {
           method: "POST",
           body: formData,
@@ -178,11 +178,14 @@ const Form = ({ pageType, setPageType }) => {
   const login = async (values, onSubmitProps) => {
     setLoading(true);
     try {
-      const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const loggedInResponse = await fetch(
+        "https://finance-app-oi2l.onrender.com/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }
+      );
 
       if (loggedInResponse.status != 200) {
         const data = await loggedInResponse.json();
@@ -240,7 +243,7 @@ const Form = ({ pageType, setPageType }) => {
 
     try {
       const resetPasswordResponse = await fetch(
-        "http://localhost:3001/auth/resetPassword",
+        "https://finance-app-oi2l.onrender.com/auth/resetPassword",
         {
           method: "POST",
           body: formData,

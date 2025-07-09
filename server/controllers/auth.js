@@ -98,7 +98,7 @@ export const register = async (req, res) => {
       await newVerification.save();
 
       const PORT = process.env.PORT || 6001;
-      const url = `http://localhost:${PORT}`;
+      const url = `${process.env.CLIENT_URL}`;
 
       await sendMail(
         savedUser.email,
@@ -191,7 +191,7 @@ export const login = async (req, res) => {
           expiresAt: Date.now() + 3600000,
         });
 
-        const url = `http://localhost:${PORT}`;
+        const url = `${process.env.CLIENT_URL}`;
 
         await sendMail(
           user.email,

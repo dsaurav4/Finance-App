@@ -425,7 +425,7 @@ export const getSavingGoals = async (
 ) => {
   try {
     const response = await fetch(
-      `http://localhost:3001/savingGoals/${userId}`,
+      `https://finance-app-oi2l.onrender.com/savingGoals/${userId}`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },

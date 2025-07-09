@@ -197,7 +197,7 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
 
       // send a PATCH request to the server to update the saving goal
       const response = await fetch(
-        `http://localhost:3001/savingGoals/${userId}/${goal._id}`,
+        `https://finance-app-oi2l.onrender.com/savingGoals/${userId}/${goal._id}`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },
@@ -254,7 +254,7 @@ const SavingGoalProgress = ({ goal, active, expired, upcoming }) => {
     try {
       // send a DELETE request to the server to delete the saving goal
       const response = await fetch(
-        `http://localhost:3001/savingGoals/${userId}/${goal._id}`,
+        `https://finance-app-oi2l.onrender.com/savingGoals/${userId}/${goal._id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

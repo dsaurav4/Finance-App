@@ -120,7 +120,7 @@ const Reset = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/auth/verifyResetCode/${userId}`,
+        `https://finance-app-oi2l.onrender.com/auth/verifyResetCode/${userId}`,
         {
           method: "POST",
           body: formData,
@@ -183,7 +183,7 @@ const Reset = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/auth/updatePassword/${userId}`,
+        `https://finance-app-oi2l.onrender.com/auth/updatePassword/${userId}`,
         {
           method: "PATCH",
           body: formData,

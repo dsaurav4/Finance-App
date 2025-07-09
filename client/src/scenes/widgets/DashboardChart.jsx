@@ -46,6 +46,10 @@ const DashboardChart = ({ period, setPeriod }) => {
   const incomes = useSelector((state) => state.incomes);
   const expenses = useSelector((state) => state.expenses);
 
+  if (!incomes || !expenses) {
+    return <Typography>Loading chart...</Typography>;
+  }
+
   // the current theme
   const { palette } = useTheme();
 

@@ -256,7 +256,7 @@ const TransactionTable = ({ type, transactions }) => {
       if (type === "income") {
         // Delete income transaction
         const response = await fetch(
-          `http://localhost:3001/transactions/${userId}/income/${row.id}`,
+          `https://finance-app-oi2l.onrender.com/transactions/${userId}/income/${row.id}`,
           {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
@@ -270,7 +270,7 @@ const TransactionTable = ({ type, transactions }) => {
       } else {
         // Delete expense transaction
         const response = await fetch(
-          `http://localhost:3001/transactions/${userId}/expense/${row.id}`,
+          `https://finance-app-oi2l.onrender.com/transactions/${userId}/expense/${row.id}`,
           {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },

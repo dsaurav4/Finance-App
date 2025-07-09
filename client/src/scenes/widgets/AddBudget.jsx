@@ -134,7 +134,7 @@ const AddBudget = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/budgets/${_id}/budgets`,
+        `https://finance-app-oi2l.onrender.com/budgets/${_id}/budgets`,
         {
           method: "POST",
           headers: {

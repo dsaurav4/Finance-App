@@ -233,7 +233,7 @@ const AddTransactionWidget = ({
 
     // Send a POST request to the server to save the income transaction
     const response = await fetch(
-      `http://localhost:3001/transactions/${_id}/income`,
+      `https://finance-app-oi2l.onrender.com/transactions/${_id}/income`,
       {
         method: "POST",
         headers: {
@@ -301,7 +301,7 @@ const AddTransactionWidget = ({
 
     // Send a PATCH request to the server to update the income
     const response = await fetch(
-      `http://localhost:3001/transactions/income/${editRow.id}/`,
+      `https://finance-app-oi2l.onrender.com/transactions/income/${editRow.id}/`,
       {
         method: "PATCH",
         headers: {
@@ -370,7 +370,7 @@ const AddTransactionWidget = ({
 
     // Send a PATCH request to the server to update the expense
     const response = await fetch(
-      `http://localhost:3001/transactions/expense/${editRow.id}/`,
+      `https://finance-app-oi2l.onrender.com/transactions/expense/${editRow.id}/`,
       {
         method: "PATCH",
         headers: {
@@ -437,7 +437,7 @@ const AddTransactionWidget = ({
 
     // Send a POST request to the server to save the expense transaction
     const response = await fetch(
-      `http://localhost:3001/transactions/${_id}/expense`,
+      `https://finance-app-oi2l.onrender.com/transactions/${_id}/expense`,
       {
         method: "POST",
         headers: {

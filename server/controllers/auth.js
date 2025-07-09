@@ -136,11 +136,12 @@ export const register = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
-  } finally {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
   }
+  // finally {
+  //   if (req.file) {
+  //     fs.unlinkSync(req.file.path);
+  //   }
+  // }
 };
 
 /* LOGIN */

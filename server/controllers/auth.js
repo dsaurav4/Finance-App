@@ -86,6 +86,7 @@ export const register = async (req, res) => {
 
     if (savedUser) {
       const validationCode = uuidv4();
+      console.log(validationCode);
       const codeSalt = await bcrypt.genSalt();
       const codeHash = await bcrypt.hash(validationCode, codeSalt);
 
@@ -190,7 +191,7 @@ export const login = async (req, res) => {
           expiresAt: Date.now() + 3600000,
         });
 
-        const url = `${process.env.CLIENT_URL}`;
+        const url = `http://localhost:${PORT}`;
 
         await sendMail(
           user.email,

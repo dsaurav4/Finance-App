@@ -1,4 +1,4 @@
-# [Finance App] [http://saurav-finance.netlify.app]
+# Finance App [http://saurav-finance.netlify.app]
 
 ## Introduction
 The Finance App is a personal finance management tool designed to simplify budgeting, expense tracking, and financial decision-making. Inspired by real-world financial challenges, the app provides users with the tools to understand their spending habits, visualize their financial data, and make informed decisions to achieve financial goals.
